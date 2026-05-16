@@ -1,24 +1,15 @@
 type ButtonProps = {
     children: React.ReactNode
+    type?: 'button' | 'submit' | 'reset'
 }
 
-export default function ButtonWhite({ children }: ButtonProps) {
+export default function ButtonWhite({ children, type = 'button' }: ButtonProps) {
     return (
-        <button className="
-        mx-auto
-        block
-        w-60
-        rounded-xl
-        bg-white
-        p-4
-        text-base
-        text-black
-        transition-all
-        hover:opacity-80
-        active:opacity-50
-        "
+        <button
+            type={type}
+            className="w-full rounded-xl border border-gray-200 bg-white p-3 text-sm font-medium text-gray-700 transition-all hover:bg-gray-50 active:bg-gray-100"
         >
-        {children}
+            {children}
         </button>
     )
 }
