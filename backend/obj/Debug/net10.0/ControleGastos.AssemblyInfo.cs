@@ -10,10 +10,11 @@
 using System;
 using System.Reflection;
 
+[assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("a2ad157d-8fc1-471a-90de-668e16983afc")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("ControleGastos")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+20cae2089feb394a71fb4a98b640d494f76ec29f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bb05f1ef78567bd234c659ce76be9c4ca665255d")]
 [assembly: System.Reflection.AssemblyProductAttribute("ControleGastos")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ControleGastos")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
