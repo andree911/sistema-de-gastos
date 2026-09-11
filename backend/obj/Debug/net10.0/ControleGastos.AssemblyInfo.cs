@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ControleGastos")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bb05f1ef78567bd234c659ce76be9c4ca665255d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+414d71f8ef8ce0240d05b45804517ca7299ed0eb")]
 [assembly: System.Reflection.AssemblyProductAttribute("ControleGastos")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ControleGastos")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
