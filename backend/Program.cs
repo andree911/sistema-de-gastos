@@ -44,9 +44,13 @@ app.UseCors("Frontend");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-app.UseAuthentication();
-app.UseAuthorization();
-app.MapControllers();
+
+if (app.Environment.IsProduction())
+{
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
+}
 
 app.MapGet("/", () => "API de controle de gastos");
 

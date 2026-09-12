@@ -1,0 +1,23 @@
+services:
+  backend:
+    build:
+      context: .
+    restart: unless-stopped
+    env_file:
+      - ./.env
+    networks:
+      - edge
+      - db
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=edge"
+      - "traefik.http.routers.gastos-api.entrypoints=app-gastos-api"
+      - "traefik.http.routers.gastos-api.rule=Host(`srv1892430.hstgr.cloud`)"
+      - "traefik.http.routers.gastos-api.tls.certresolver=le"
+      - "traefik.http.services.gastos-api.loadbalancer.server.port=8080"
+
+networks:
+  edge:
+    external: true
+  db:
+    external: true
