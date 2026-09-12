@@ -2,7 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { Transacoes as TransacoesService, TipoTransacao, FormaPagamento } from '../../core/transacoes';
+import { Transacoes as TransacoesService, TipoTransacao, FormaPagamento, Moeda } from '../../core/transacoes';
 import { Select } from '../../shared/select/select';
 import { Datepicker } from '../../shared/datepicker/datepicker';
 
@@ -35,6 +35,12 @@ export class TransacaoDetalhe implements OnInit {
     { valor: FormaPagamento.Boleto, nome: 'Boleto' },
   ];
 
+  moedas = [
+    { valor: Moeda.BRL, nome: 'Real (BRL)' },
+    { valor: Moeda.USD, nome: 'Dólar (USD)' },
+    { valor: Moeda.EUR, nome: 'Euro (EUR)' },
+  ];
+
   form = this.fb.group({
     descricao: ['', Validators.required],
     valor: [0, [Validators.required, Validators.min(0.01)]],
@@ -42,6 +48,7 @@ export class TransacaoDetalhe implements OnInit {
     data: ['', Validators.required],
     tipo: [TipoTransacao.Gasto, Validators.required],
     formaPagamento: [null as FormaPagamento | null],
+    moeda: [Moeda.BRL, Validators.required],
   });
 
   ngOnInit(): void {
@@ -56,6 +63,7 @@ export class TransacaoDetalhe implements OnInit {
           data: transacao.data.substring(0, 10),
           tipo: transacao.tipo,
           formaPagamento: transacao.formaPagamento,
+          moeda: transacao.moeda,
         });
         this.carregando.set(false);
       },
@@ -80,6 +88,7 @@ export class TransacaoDetalhe implements OnInit {
         data: new Date(valores.data!).toISOString(),
         tipo,
         formaPagamento: tipo === TipoTransacao.Gasto ? Number(valores.formaPagamento) : null,
+        moeda: Number(valores.moeda),
       })
       .subscribe({
         next: () => this.router.navigate(['/transacoes']),

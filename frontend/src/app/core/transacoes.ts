@@ -16,6 +16,12 @@ export enum FormaPagamento {
   Boleto = 4,
 }
 
+export enum Moeda {
+  BRL = 0,
+  USD = 1,
+  EUR = 2,
+}
+
 export interface TransacaoRequest {
   descricao: string;
   valor: number;
@@ -23,6 +29,7 @@ export interface TransacaoRequest {
   data: string;
   tipo: TipoTransacao;
   formaPagamento: FormaPagamento | null;
+  moeda: Moeda;
 }
 
 export interface Transacao extends TransacaoRequest {
@@ -50,6 +57,6 @@ export class Transacoes {
   }
 
   obterPorId(id: number): Observable<Transacao> {
-  return this.http.get<Transacao>(`${API_URL}/transacoes/${id}`);
-}
+    return this.http.get<Transacao>(`${API_URL}/transacoes/${id}`);
+  }
 }

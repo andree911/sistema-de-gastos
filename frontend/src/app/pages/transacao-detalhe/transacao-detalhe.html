@@ -16,6 +16,11 @@
       </div>
 
       <div class="campo">
+        <label>Moeda</label>
+        <app-select formControlName="moeda" [opcoes]="moedas" placeholder="Selecione a moeda" />
+      </div>
+
+      <div class="campo">
         <label for="categoria">Categoria</label>
         <input id="categoria" type="text" formControlName="categoria" />
       </div>

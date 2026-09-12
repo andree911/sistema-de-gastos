@@ -17,4 +17,5 @@ public class Transacao
     public User User { get; set; } = null!;
     public TipoTransacao Tipo { get; set; }
     public FormaPagamento? FormaPagamento { get; set; }
+    public Moeda Moeda { get; set; }
 }

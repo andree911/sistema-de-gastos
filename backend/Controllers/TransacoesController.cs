@@ -27,7 +27,7 @@ public class TransacoesController : ControllerBase
     {
         var transacoes = await _context.Transacoes
             .Where(t => t.UserId == UserId)
-            .Select(t => new TransacaoResponse(t.Id, t.Descricao, t.Valor, t.Categoria, t.Data, t.Tipo, t.FormaPagamento))
+            .Select(t => new TransacaoResponse(t.Id, t.Descricao, t.Valor, t.Categoria, t.Data, t.Tipo, t.FormaPagamento, t.Moeda))
             .ToListAsync();
 
         return Ok(transacoes);
@@ -40,7 +40,7 @@ public class TransacoesController : ControllerBase
         if (transacao is null)
             return NotFound();
 
-        return Ok(new TransacaoResponse(transacao.Id, transacao.Descricao, transacao.Valor, transacao.Categoria, transacao.Data, transacao.Tipo, transacao.FormaPagamento));
+        return Ok(new TransacaoResponse(transacao.Id, transacao.Descricao, transacao.Valor, transacao.Categoria, transacao.Data, transacao.Tipo, transacao.FormaPagamento, transacao.Moeda));
     }
 
     [HttpPost]
@@ -54,13 +54,14 @@ public class TransacoesController : ControllerBase
             Data = DateTime.SpecifyKind(request.Data, DateTimeKind.Utc),
             Tipo = request.Tipo,
             FormaPagamento = request.FormaPagamento,
+            Moeda = request.Moeda,
             UserId = UserId
         };
 
         _context.Transacoes.Add(transacao);
         await _context.SaveChangesAsync();
 
-        var response = new TransacaoResponse(transacao.Id, transacao.Descricao, transacao.Valor, transacao.Categoria, transacao.Data, transacao.Tipo, transacao.FormaPagamento);
+        var response = new TransacaoResponse(transacao.Id, transacao.Descricao, transacao.Valor, transacao.Categoria, transacao.Data, transacao.Tipo, transacao.FormaPagamento, transacao.Moeda);
         return CreatedAtAction(nameof(ObterPorId), new { id = transacao.Id }, response);
     }
 
@@ -77,6 +78,7 @@ public class TransacoesController : ControllerBase
         transacao.Data = DateTime.SpecifyKind(request.Data, DateTimeKind.Utc);
         transacao.Tipo = request.Tipo;
         transacao.FormaPagamento = request.FormaPagamento;
+        transacao.Moeda = request.Moeda;
 
         await _context.SaveChangesAsync();
         return NoContent();

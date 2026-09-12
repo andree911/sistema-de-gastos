@@ -1,7 +1,25 @@
 <div class="transacoes-container">
   <header>
-    <h1>Minhas Transações</h1>
-    <button type="button" (click)="sair()">Sair</button>
+    <div class="header-acoes">
+      <div class="saldo-seletor">
+        <button type="button" class="saldo-botao" [class.negativo]="saldo() < 0" (click)="toggleMenuMoeda()">
+          Saldo: {{ saldo() | currency:moedaExibicaoCodigo():'' }} {{ moedaExibicaoCodigo() }}
+        </button>
+        @if (menuMoedaAberto()) {
+          <ul class="saldo-menu">
+            @for (opcao of moedas; track opcao.valor) {
+              <li
+                [class.selecionada]="opcao.valor === moedaExibicao()"
+                (click)="selecionarMoedaExibicao(opcao.valor)"
+              >
+                {{ opcao.nome }}
+              </li>
+            }
+          </ul>
+        }
+      </div>
+      <button type="button" (click)="sair()">Sair</button>
+    </div>
   </header>
 
   <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-transacao">
@@ -13,6 +31,11 @@
     <div class="campo">
       <label for="valor">Valor</label>
       <input id="valor" type="number" step="0.01" formControlName="valor" />
+    </div>
+
+    <div class="campo">
+      <label>Moeda</label>
+      <app-select formControlName="moeda" [opcoes]="moedas" placeholder="Selecione a moeda" />
     </div>
 
     <div class="campo">
@@ -31,11 +54,11 @@
     </div>
 
     @if (form.value.tipo === 0) {
-    <div class="campo">
-      <label>Forma de pagamento</label>
-      <app-select formControlName="formaPagamento" [opcoes]="formasPagamento" placeholder="Selecione a forma de pagamento" />
-    </div>
-  }
+      <div class="campo">
+        <label>Forma de pagamento</label>
+        <app-select formControlName="formaPagamento" [opcoes]="formasPagamento" placeholder="Selecione a forma de pagamento" />
+      </div>
+    }
 
     <p class="erro" *ngIf="erro">{{ erro }}</p>
 
@@ -57,7 +80,7 @@
       @for (t of transacoes(); track t.id) {
         <tr>
           <td>{{ t.descricao }}</td>
-          <td>{{ t.valor | currency:'BRL' }}</td>
+          <td>{{ t.valor | currency:codigoMoeda(t.moeda):'' }} {{ codigoMoeda(t.moeda) }}</td>
           <td>{{ t.categoria }}</td>
           <td>{{ t.data | date:'dd/MM/yyyy' }}</td>
           <td>{{ t.tipo === 0 ? 'Gasto' : 'Receita' }}</td>
