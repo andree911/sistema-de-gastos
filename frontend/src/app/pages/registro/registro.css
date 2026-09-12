@@ -1,0 +1,100 @@
+.registro-container {
+  max-width: 380px;
+  margin: 6rem auto;
+  padding: 2.5rem;
+  background: linear-gradient(145deg, #1a1a26, #14141e);
+  border: 1px solid var(--cor-borda);
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(99, 102, 241, 0.05);
+}
+
+h1 {
+  margin: 0 0 2rem;
+  font-size: 1.75rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #818cf8, #c084fc);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.campo {
+  margin-bottom: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.campo label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--cor-texto-suave);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.campo input {
+  padding: 0.75rem 1rem;
+  background: #0f0f17;
+  border: 1px solid var(--cor-borda);
+  border-radius: 8px;
+  color: var(--cor-texto);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.campo input:focus {
+  outline: none;
+  border-color: var(--cor-primaria);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+button[type="submit"] {
+  width: 100%;
+  padding: 0.85rem;
+  margin-top: 0.5rem;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+}
+
+button[type="submit"]:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.35);
+}
+
+button[type="submit"]:disabled {
+  background: var(--cor-borda);
+  color: var(--cor-texto-suave);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.erro {
+  color: var(--cor-erro);
+  font-size: 0.85rem;
+  background: rgba(248, 113, 113, 0.1);
+  border: 1px solid rgba(248, 113, 113, 0.3);
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  margin: 0.5rem 0;
+}
+
+.registro-container p:last-child {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--cor-texto-suave);
+}
+
+.registro-container a {
+  color: #a5b4fc;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.registro-container a:hover {
+  text-decoration: underline;
+}

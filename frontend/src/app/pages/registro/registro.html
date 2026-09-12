@@ -1,0 +1,26 @@
+<div class="registro-container">
+  <h1>Criar conta</h1>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="campo">
+      <label for="nome">Nome</label>
+      <input id="nome" type="text" formControlName="nome" />
+    </div>
+
+    <div class="campo">
+      <label for="email">Email</label>
+      <input id="email" type="email" formControlName="email" />
+    </div>
+
+    <div class="campo">
+      <label for="senha">Senha</label>
+      <input id="senha" type="password" formControlName="senha" />
+    </div>
+
+    <p class="erro" *ngIf="erro">{{ erro }}</p>
+
+    <button type="submit" [disabled]="form.invalid">Registrar</button>
+  </form>
+
+  <p>Já tem conta? <a routerLink="/login">Entrar</a></p>
+</div>

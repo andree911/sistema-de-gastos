@@ -1,0 +1,80 @@
+<div class="transacoes-container">
+  <header>
+    <h1>Minhas Transações</h1>
+    <button type="button" (click)="sair()">Sair</button>
+  </header>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-transacao">
+    <div class="campo">
+      <label for="descricao">Descrição</label>
+      <input id="descricao" type="text" formControlName="descricao" />
+    </div>
+
+    <div class="campo">
+      <label for="valor">Valor</label>
+      <input id="valor" type="number" step="0.01" formControlName="valor" />
+    </div>
+
+    <div class="campo">
+      <label for="categoria">Categoria</label>
+      <input id="categoria" type="text" formControlName="categoria" />
+    </div>
+
+    <div class="campo">
+      <label for="data">Data</label>
+      <input id="data" type="date" formControlName="data" />
+    </div>
+
+    <div class="campo">
+      <label for="tipo">Tipo</label>
+      <select id="tipo" formControlName="tipo">
+        @for (item of tiposTransacao; track item.valor) {
+          <option [value]="item.valor">{{ item.nome }}</option>
+        }
+      </select>
+    </div>
+
+    @if (form.value.tipo === 0) {
+      <div class="campo">
+        <label for="formaPagamento">Forma de pagamento</label>
+        <select id="formaPagamento" formControlName="formaPagamento">
+          @for (item of formasPagamento; track item.valor) {
+            <option [value]="item.valor">{{ item.nome }}</option>
+          }
+        </select>
+      </div>
+    }
+
+    <p class="erro" *ngIf="erro">{{ erro }}</p>
+
+    <button type="submit" [disabled]="form.invalid">Adicionar</button>
+  </form>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Descrição</th>
+        <th>Valor</th>
+        <th>Categoria</th>
+        <th>Data</th>
+        <th>Tipo</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (t of transacoes(); track t.id) {
+        <tr>
+          <td>{{ t.descricao }}</td>
+          <td>{{ t.valor | currency:'BRL' }}</td>
+          <td>{{ t.categoria }}</td>
+          <td>{{ t.data | date:'dd/MM/yyyy' }}</td>
+          <td>{{ t.tipo === 0 ? 'Gasto' : 'Receita' }}</td>
+          <td>
+            <a [routerLink]="['/transacoes', t.id]">Editar</a>
+            <button type="button" (click)="remover(t.id)">Excluir</button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

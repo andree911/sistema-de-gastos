@@ -22,7 +22,7 @@ namespace ControleGastos.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("ControleGastos.Models.Gasto", b =>
+            modelBuilder.Entity("ControleGastos.Models.Transacao", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -41,7 +41,10 @@ namespace ControleGastos.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("FormaPagamento")
+                    b.Property<int?>("FormaPagamento")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Tipo")
                         .HasColumnType("integer");
 
                     b.Property<int>("UserId")
@@ -54,7 +57,7 @@ namespace ControleGastos.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Gastos");
+                    b.ToTable("Transacoes");
                 });
 
             modelBuilder.Entity("ControleGastos.Models.User", b =>
@@ -85,7 +88,7 @@ namespace ControleGastos.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("ControleGastos.Models.Gasto", b =>
+            modelBuilder.Entity("ControleGastos.Models.Transacao", b =>
                 {
                     b.HasOne("ControleGastos.Models.User", "User")
                         .WithMany()
