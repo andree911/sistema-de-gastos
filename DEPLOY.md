@@ -17,7 +17,7 @@ entre vários projetos:
 
 O projeto ainda não tem domínio próprio, então a API usa o hostname da VPS
 com uma porta dedicada (mesmo padrão dos outros projetos hospedados aqui):
-`https://srv1892430.hstgr.cloud:3029`, TLS terminado pelo Traefik.
+[https://srv1892430.hstgr.cloud:3029](https://srv1892430.hstgr.cloud:3029), TLS terminado pelo Traefik.
 
 ### 1. Criar a deploy key (só na primeira vez)
 
@@ -100,7 +100,7 @@ docker compose -f docker-compose.prod.yml ps
 docker compose -f docker-compose.prod.yml logs -f backend
 ```
 
-Acesse `https://srv1892430.hstgr.cloud:3029` (deve responder com o texto
+Acesse [https://srv1892430.hstgr.cloud:3029](https://srv1892430.hstgr.cloud:3029) (deve responder com o texto
 `API de controle de gastos`).
 
 ### 8. Atualizar depois de um novo push
@@ -120,7 +120,7 @@ Projeto importado direto do GitHub (`andree911/sistema-de-gastos`), com:
 | Framework Preset | Angular |
 | Output Directory | `dist/frontend/browser` |
 
-URL: `https://frontend-sandy-eight-67.vercel.app`
+URL: [https://frontend-sandy-eight-67.vercel.app](https://frontend-sandy-eight-67.vercel.app)
 
 Não precisa de variável de ambiente no Vercel — a URL da API é resolvida em
 tempo de build pelo próprio Angular, via `fileReplacements` no
