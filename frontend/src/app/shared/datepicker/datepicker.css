@@ -1,0 +1,114 @@
+.datepicker {
+  position: relative;
+  width: 100%;
+}
+
+.datepicker-gatilho {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.65rem 0.8rem;
+  background: var(--cor-input-fundo);
+  border: 1px solid var(--cor-borda);
+  border-radius: 8px;
+  color: var(--cor-texto);
+  text-align: left;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.datepicker-gatilho svg {
+  color: var(--cor-texto-suave);
+}
+
+.datepicker.aberto .datepicker-gatilho {
+  border-color: var(--cor-primaria);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--cor-primaria) 20%, transparent);
+}
+
+.datepicker.desabilitado .datepicker-gatilho {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.datepicker-painel {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 100;
+  width: 260px;
+  padding: 0.85rem;
+  background: var(--cor-card);
+  border: 1px solid var(--cor-borda);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.datepicker-cabecalho {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--cor-texto);
+  text-transform: capitalize;
+}
+
+.datepicker-cabecalho button {
+  background: transparent;
+  border: none;
+  color: var(--cor-texto-suave);
+  font-size: 1.1rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+}
+
+.datepicker-cabecalho button:hover {
+  background: color-mix(in srgb, var(--cor-primaria) 15%, transparent);
+  color: var(--cor-primaria);
+}
+
+.datepicker-semana {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 0.25rem;
+}
+
+.datepicker-semana span {
+  text-align: center;
+  font-size: 0.7rem;
+  color: var(--cor-texto-suave);
+}
+
+.datepicker-grade {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.datepicker-dia {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--cor-texto);
+  font-size: 0.8rem;
+}
+
+.datepicker-dia:hover {
+  background: color-mix(in srgb, var(--cor-primaria) 15%, transparent);
+}
+
+.datepicker-dia.hoje {
+  border: 1px solid var(--cor-primaria);
+}
+
+.datepicker-dia.selecionado {
+  background: var(--cor-primaria);
+  color: white;
+  font-weight: 600;
+}

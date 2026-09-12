@@ -1,0 +1,71 @@
+.select-customizado {
+  position: relative;
+  width: 100%;
+}
+
+.select-gatilho {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.65rem 0.8rem;
+  background: var(--cor-input-fundo);
+  border: 1px solid var(--cor-borda);
+  border-radius: 8px;
+  color: var(--cor-texto);
+  text-align: left;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.select-customizado.aberto .select-gatilho {
+  border-color: var(--cor-primaria);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--cor-primaria) 20%, transparent);
+}
+
+.select-customizado.desabilitado .select-gatilho {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.seta {
+  color: var(--cor-texto-suave);
+  transition: transform 0.15s;
+}
+
+.select-customizado.aberto .seta {
+  transform: rotate(180deg);
+}
+
+.select-lista {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 100;
+  margin: 0;
+  padding: 0.35rem;
+  list-style: none;
+  background: var(--cor-card);
+  border: 1px solid var(--cor-borda);
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.select-opcao {
+  padding: 0.6rem 0.7rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--cor-texto);
+}
+
+.select-opcao:hover {
+  background: color-mix(in srgb, var(--cor-primaria) 15%, transparent);
+}
+
+.select-opcao.selecionada {
+  color: var(--cor-primaria);
+  font-weight: 600;
+}

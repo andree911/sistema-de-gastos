@@ -3,9 +3,11 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Transacoes as TransacoesService, TipoTransacao, FormaPagamento } from '../../core/transacoes';
+import { Select } from '../../shared/select/select';
+import { Datepicker } from '../../shared/datepicker/datepicker';
 
 @Component({
-  imports: [ReactiveFormsModule, CommonModule, RouterLink],
+  imports: [ReactiveFormsModule, CommonModule, RouterLink, Select, Datepicker],
   selector: 'app-transacao-detalhe',
   styleUrl: './transacao-detalhe.css',
   templateUrl: './transacao-detalhe.html',

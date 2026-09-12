@@ -21,27 +21,19 @@
       </div>
 
       <div class="campo">
-        <label for="data">Data</label>
-        <input id="data" type="date" formControlName="data" />
+        <label>Data</label>
+        <app-datepicker formControlName="data" />
       </div>
 
       <div class="campo">
-        <label for="tipo">Tipo</label>
-        <select id="tipo" formControlName="tipo">
-          @for (item of tiposTransacao; track item.valor) {
-            <option [value]="item.valor">{{ item.nome }}</option>
-          }
-        </select>
+        <label>Tipo</label>
+        <app-select formControlName="tipo" [opcoes]="tiposTransacao" placeholder="Selecione o tipo" />
       </div>
 
       @if (form.value.tipo === 0) {
         <div class="campo">
-          <label for="formaPagamento">Forma de pagamento</label>
-          <select id="formaPagamento" formControlName="formaPagamento">
-            @for (item of formasPagamento; track item.valor) {
-              <option [value]="item.valor">{{ item.nome }}</option>
-            }
-          </select>
+          <label>Forma de pagamento</label>
+          <app-select formControlName="formaPagamento" [opcoes]="formasPagamento" placeholder="Selecione a forma de pagamento" />
         </div>
       }
 

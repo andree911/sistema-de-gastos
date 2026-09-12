@@ -1,0 +1,22 @@
+<div class="select-customizado" [class.aberto]="aberto()" [class.desabilitado]="disabled()">
+  <button type="button" class="select-gatilho" (click)="toggle()">
+    <span>{{ opcaoSelecionada?.nome ?? placeholder() }}</span>
+    <svg class="seta" viewBox="0 0 24 24" width="16" height="16">
+      <path d="M7 10l5 5 5-5z" fill="currentColor" />
+    </svg>
+  </button>
+
+  @if (aberto()) {
+    <ul class="select-lista">
+      @for (opcao of opcoes(); track opcao.valor) {
+        <li
+          class="select-opcao"
+          [class.selecionada]="opcao.valor === valorSelecionado()"
+          (click)="selecionar(opcao)"
+        >
+          {{ opcao.nome }}
+        </li>
+      }
+    </ul>
+  }
+</div>

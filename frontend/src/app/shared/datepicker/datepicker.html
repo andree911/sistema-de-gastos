@@ -1,0 +1,43 @@
+<div class="datepicker" [class.aberto]="aberto()" [class.desabilitado]="disabled()">
+  <button type="button" class="datepicker-gatilho" (click)="toggle()">
+    <span>{{ dataFormatada || placeholder() }}</span>
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+      <rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.5" />
+      <path d="M3 9h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+    </svg>
+  </button>
+
+  @if (aberto()) {
+    <div class="datepicker-painel">
+      <div class="datepicker-cabecalho">
+        <button type="button" (click)="mesAnterior()">‹</button>
+        <span>{{ nomeMesAno() }}</span>
+        <button type="button" (click)="proximoMes()">›</button>
+      </div>
+
+      <div class="datepicker-semana">
+        @for (dia of diasSemana; track $index) {
+          <span>{{ dia }}</span>
+        }
+      </div>
+
+      <div class="datepicker-grade">
+        @for (dia of diasDoMes(); track $index) {
+          @if (dia) {
+            <button
+              type="button"
+              class="datepicker-dia"
+              [class.selecionado]="ehSelecionado(dia)"
+              [class.hoje]="ehHoje(dia)"
+              (click)="selecionarDia(dia)"
+            >
+              {{ dia }}
+            </button>
+          } @else {
+            <span></span>
+          }
+        }
+      </div>
+    </div>
+  }
+</div>
