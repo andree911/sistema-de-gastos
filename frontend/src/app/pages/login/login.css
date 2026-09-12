@@ -2,20 +2,17 @@
   max-width: 380px;
   margin: 6rem auto;
   padding: 2.5rem;
-  background: linear-gradient(145deg, #1a1a26, #14141e);
+  background: var(--cor-card);
   border: 1px solid var(--cor-borda);
   border-radius: 16px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(99, 102, 241, 0.05);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px color-mix(in srgb, var(--cor-primaria) 5%, transparent);
 }
 
 h1 {
   margin: 0 0 2rem;
   font-size: 1.75rem;
   font-weight: 700;
-  background: linear-gradient(135deg, #818cf8, #c084fc);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--cor-primaria);
 }
 
 .campo {
@@ -35,7 +32,7 @@ h1 {
 
 .campo input {
   padding: 0.75rem 1rem;
-  background: #0f0f17;
+  background: var(--cor-input-fundo);
   border: 1px solid var(--cor-borda);
   border-radius: 8px;
   color: var(--cor-texto);
@@ -45,14 +42,14 @@ h1 {
 .campo input:focus {
   outline: none;
   border-color: var(--cor-primaria);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--cor-primaria) 20%, transparent);
 }
 
 button[type="submit"] {
   width: 100%;
   padding: 0.85rem;
   margin-top: 0.5rem;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: linear-gradient(135deg, var(--cor-primaria), var(--cor-primaria-hover));
   color: white;
   font-weight: 600;
   border: none;
@@ -62,24 +59,40 @@ button[type="submit"] {
 
 button[type="submit"]:not(:disabled):hover {
   transform: translateY(-1px);
-  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.35);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--cor-primaria) 35%, transparent);
 }
 
 button[type="submit"]:disabled {
-  background: var(--cor-borda);
+  background: color-mix(in srgb, var(--cor-primaria) 35%, var(--cor-card));
   color: var(--cor-texto-suave);
   cursor: not-allowed;
-  opacity: 0.6;
 }
 
 .erro {
+  position: fixed;
+  top: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
   color: var(--cor-erro);
   font-size: 0.85rem;
-  background: rgba(248, 113, 113, 0.1);
-  border: 1px solid rgba(248, 113, 113, 0.3);
-  padding: 0.6rem 0.8rem;
-  border-radius: 8px;
-  margin: 0.5rem 0;
+  background: var(--cor-card);
+  border: 1px solid rgba(248, 113, 113, 0.4);
+  padding: 0.85rem 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  animation: slideDown 0.25s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -12px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
 }
 
 .login-container p:last-child {
@@ -90,7 +103,7 @@ button[type="submit"]:disabled {
 }
 
 .login-container a {
-  color: #a5b4fc;
+  color: var(--cor-primaria);
   text-decoration: none;
   font-weight: 600;
 }

@@ -2,20 +2,17 @@
   max-width: 480px;
   margin: 4rem auto;
   padding: 2.5rem;
-  background: linear-gradient(145deg, #1a1a26, #14141e);
+  background: var(--cor-card);
   border: 1px solid var(--cor-borda);
   border-radius: 16px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
 }
 
 h1 {
   margin: 0 0 2rem;
   font-size: 1.5rem;
   font-weight: 700;
-  background: linear-gradient(135deg, #818cf8, #c084fc);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--cor-primaria);
 }
 
 .campo {
@@ -36,7 +33,7 @@ h1 {
 .campo input,
 .campo select {
   padding: 0.75rem 1rem;
-  background: #0f0f17;
+  background: var(--cor-input-fundo);
   border: 1px solid var(--cor-borda);
   border-radius: 8px;
   color: var(--cor-texto);
@@ -46,7 +43,7 @@ h1 {
 .campo select:focus {
   outline: none;
   border-color: var(--cor-primaria);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--cor-primaria) 20%, transparent);
 }
 
 .erro {
@@ -76,13 +73,19 @@ h1 {
 }
 
 .acoes button {
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: linear-gradient(135deg, var(--cor-primaria), var(--cor-primaria-hover));
   color: white;
   border: none;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.acoes button:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--cor-primaria) 35%, transparent);
 }
 
 .acoes button:disabled {
-  background: var(--cor-borda);
+  background: color-mix(in srgb, var(--cor-primaria) 35%, var(--cor-card));
   color: var(--cor-texto-suave);
   cursor: not-allowed;
 }

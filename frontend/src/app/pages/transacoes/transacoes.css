@@ -15,10 +15,7 @@ header h1 {
   margin: 0;
   font-size: 1.75rem;
   font-weight: 700;
-  background: linear-gradient(135deg, #818cf8, #c084fc);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--cor-primaria);
 }
 
 header button {
@@ -41,7 +38,7 @@ header button:hover {
   gap: 1rem;
   padding: 1.5rem;
   margin-bottom: 2rem;
-  background: linear-gradient(145deg, #1a1a26, #14141e);
+  background: var(--cor-card);
   border: 1px solid var(--cor-borda);
   border-radius: 16px;
 }
@@ -63,7 +60,7 @@ header button:hover {
 .form-transacao input,
 .form-transacao select {
   padding: 0.65rem 0.8rem;
-  background: #0f0f17;
+  background: var(--cor-input-fundo);
   border: 1px solid var(--cor-borda);
   border-radius: 8px;
   color: var(--cor-texto);
@@ -74,13 +71,13 @@ header button:hover {
 .form-transacao select:focus {
   outline: none;
   border-color: var(--cor-primaria);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--cor-primaria) 20%, transparent);
 }
 
 .form-transacao button[type="submit"] {
   grid-column: 1 / -1;
   padding: 0.85rem;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: var(--cor-card);
   color: white;
   font-weight: 600;
   border: none;
@@ -90,7 +87,7 @@ header button:hover {
 
 .form-transacao button[type="submit"]:not(:disabled):hover {
   transform: translateY(-1px);
-  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.35);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--cor-primaria) 35%, transparent);
 }
 
 .form-transacao button[type="submit"]:disabled {
@@ -113,14 +110,14 @@ header button:hover {
 table {
   width: 100%;
   border-collapse: collapse;
-  background: linear-gradient(145deg, #1a1a26, #14141e);
+  background: var(--cor-card);
   border: 1px solid var(--cor-borda);
   border-radius: 16px;
   overflow: hidden;
 }
 
 thead {
-  background: rgba(99, 102, 241, 0.08);
+  background: color-mix(in srgb, var(--cor-primaria) 10%, transparent);
 }
 
 th {
@@ -139,7 +136,18 @@ td {
 }
 
 tbody tr:hover {
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+td a {
+  color: var(--cor-primaria);
+  text-decoration: none;
+  font-weight: 600;
+  margin-right: 0.75rem;
+}
+
+td a:hover {
+  text-decoration: underline;
 }
 
 td button {
