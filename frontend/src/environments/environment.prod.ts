@@ -1,3 +1,3 @@
 export const environment = {
-  apiUrl: 'https://srv1892430.hstgr.cloud:3025/api',
+  apiUrl: 'https://srv1892430.hstgr.cloud:3029/api',
 };
