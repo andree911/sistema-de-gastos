@@ -1,10 +1,9 @@
 import { Component, OnInit, inject, signal, computed, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { Transacoes as TransacoesService, Transacao, TipoTransacao, FormaPagamento, Moeda } from '../../core/transacoes';
 import { Cambio } from '../../core/cambio';
-import { Auth } from '../../core/auth';
 import { Select } from '../../shared/select/select';
 import { Datepicker } from '../../shared/datepicker/datepicker';
 
@@ -18,8 +17,6 @@ export class Transacoes implements OnInit {
   private service = inject(TransacoesService);
   private cambio = inject(Cambio);
   private fb = inject(FormBuilder);
-  private auth = inject(Auth);
-  private router = inject(Router);
 
   transacoes = signal<Transacao[]>([]);
   erro = '';
@@ -27,6 +24,7 @@ export class Transacoes implements OnInit {
   taxasCambio = signal<Record<string, number>>({ BRL: 1 });
   moedaExibicao = signal<Moeda>(Moeda.BRL);
   menuMoedaAberto = signal(false);
+  formAberto = signal(false);
 
   moedas = [
     { valor: Moeda.BRL, nome: 'Real (BRL)' },
@@ -95,6 +93,10 @@ export class Transacoes implements OnInit {
     this.menuMoedaAberto.update((v) => !v);
   }
 
+  toggleFormulario(): void {
+    this.formAberto.update((v) => !v);
+  }
+
   selecionarMoedaExibicao(moeda: Moeda): void {
     this.moedaExibicao.set(moeda);
     this.menuMoedaAberto.set(false);
@@ -133,6 +135,7 @@ export class Transacoes implements OnInit {
       .subscribe({
         next: () => {
           this.form.reset({ tipo: TipoTransacao.Gasto, valor: 0, formaPagamento: null, moeda: Moeda.BRL });
+          this.formAberto.set(false);
           this.carregar();
         },
         error: () => (this.erro = 'Não foi possível salvar a transação.'),
@@ -144,10 +147,5 @@ export class Transacoes implements OnInit {
       next: () => this.carregar(),
       error: () => (this.erro = 'Não foi possível remover a transação.'),
     });
-  }
-
-  sair(): void {
-    this.auth.logout();
-    this.router.navigate(['/login']);
   }
 }

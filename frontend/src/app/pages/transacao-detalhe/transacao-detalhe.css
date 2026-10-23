@@ -1,6 +1,6 @@
 .detalhe-container {
   max-width: 480px;
-  margin: 4rem auto;
+  margin: 8rem auto 4rem;
   padding: 2.5rem;
   background: var(--cor-card);
   border: 1px solid var(--cor-borda);

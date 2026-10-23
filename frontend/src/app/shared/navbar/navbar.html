@@ -1,0 +1,13 @@
+<nav class="navbar">
+  <span class="marca">Controle de Gastos</span>
+
+  <ul class="links">
+    @for (link of links; track link.rota) {
+      <li>
+        <a [routerLink]="link.rota" routerLinkActive="ativo">{{ link.rotulo }}</a>
+      </li>
+    }
+  </ul>
+
+  <button type="button" class="botao-sair" (click)="sair()">Sair</button>
+</nav>

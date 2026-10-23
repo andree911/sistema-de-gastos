@@ -20,6 +20,12 @@ export interface AuthResponse {
   email: string;
 }
 
+export interface Perfil {
+  id: number;
+  nome: string;
+  email: string;
+}
+
 @Service()
 export class Auth {
   private http = inject(HttpClient);
@@ -34,6 +40,10 @@ export class Auth {
     return this.http.post<AuthResponse>(`${API_URL}/auth/login`, request).pipe(
       tap(response => this.salvarSessao(response))
     );
+  }
+
+  obterPerfil(): Observable<Perfil> {
+    return this.http.get<Perfil>(`${API_URL}/auth/me`);
   }
 
   logout(): void {

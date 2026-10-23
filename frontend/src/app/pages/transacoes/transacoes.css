@@ -1,6 +1,6 @@
 .transacoes-container {
   max-width: 900px;
-  margin: 3rem auto;
+  margin: 7rem auto 3rem;
   padding: 0 1.5rem 3rem;
 }
 
@@ -116,6 +116,16 @@ table {
   overflow: hidden;
 }
 
+.sem-transacoes {
+  margin: 0;
+  padding: 3rem 1rem;
+  background: var(--cor-card);
+  border: 1px solid var(--cor-borda);
+  border-radius: 16px;
+  color: var(--cor-texto-suave);
+  text-align: center;
+}
+
 thead {
   background: color-mix(in srgb, var(--cor-primaria) 10%, transparent);
 }
@@ -162,6 +172,35 @@ td button {
 
 td button:hover {
   background: rgba(248, 113, 113, 0.1);
+}
+
+.botao-nova-transacao {
+  width: 2.4rem;
+  height: 2.4rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  line-height: 1;
+  background: linear-gradient(135deg, var(--cor-primaria), var(--cor-primaria-hover));
+  color: white;
+  border: none;
+  border-radius: 50%;
+  outline: none;
+  transition: transform 0.15s;
+}
+
+.botao-nova-transacao:hover {
+  transform: translateY(-1px);
+  border-color: transparent;
+  color: white;
+}
+
+.botao-nova-transacao.ativo {
+  background: var(--cor-card);
+  border: 1px solid var(--cor-borda);
+  color: var(--cor-texto-suave);
 }
 
 .saldo-seletor {

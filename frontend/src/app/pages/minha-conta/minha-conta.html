@@ -1,0 +1,34 @@
+<main class="conta-container">
+  <section class="conta-card">
+    @if (carregando()) {
+      <p class="estado">Carregando seus dados...</p>
+    } @else if (erro()) {
+      <p class="erro">{{ erro() }}</p>
+    } @else if (perfil(); as usuario) {
+      <div class="conta-cabecalho">
+        <div class="avatar">{{ inicialNome() }}</div>
+        <div>
+          <p class="eyebrow">Minha conta</p>
+          <h1>{{ usuario.nome }}</h1>
+          <p class="subtitulo">Seus dados pessoais</p>
+        </div>
+      </div>
+
+      <div class="dados-conta">
+        <div class="dado">
+          <span class="rotulo">Nome</span>
+          <strong>{{ usuario.nome }}</strong>
+        </div>
+        <div class="dado">
+          <span class="rotulo">E-mail</span>
+          <strong>{{ usuario.email }}</strong>
+        </div>
+        <div class="dado">
+          <span class="rotulo">Identificador</span>
+          <strong>#{{ usuario.id }}</strong>
+        </div>
+      </div>
+
+    }
+  </section>
+</main>

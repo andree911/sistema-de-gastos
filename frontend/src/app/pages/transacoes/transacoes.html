@@ -18,10 +18,13 @@
           </ul>
         }
       </div>
-      <button type="button" (click)="sair()">Sair</button>
+      <button type="button" class="botao-nova-transacao" [class.ativo]="formAberto()" (click)="toggleFormulario()">
+        {{ formAberto() ? '×' : '+' }}
+      </button>
     </div>
   </header>
 
+  @if (formAberto()) {
   <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-transacao">
     <div class="campo">
       <label for="descricao">Descrição</label>
@@ -64,7 +67,11 @@
 
     <button type="submit" [disabled]="form.invalid">Adicionar</button>
   </form>
+  }
 
+  @if (transacoes().length === 0) {
+    <p class="sem-transacoes">Nenhuma transação cadastrada.</p>
+  } @else {
   <table>
     <thead>
       <tr>
@@ -92,4 +99,5 @@
       }
     </tbody>
   </table>
+  }
 </div>

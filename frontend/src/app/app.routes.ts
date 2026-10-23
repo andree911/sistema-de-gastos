@@ -3,6 +3,7 @@ import { Login } from './pages/login/login';
 import { Registro } from './pages/registro/registro';
 import { Transacoes } from './pages/transacoes/transacoes';
 import { TransacaoDetalhe } from './pages/transacao-detalhe/transacao-detalhe';
+import { MinhaConta } from './pages/minha-conta/minha-conta';
 import { authGuard } from './core/auth-guard';
 
 export const routes: Routes = [
@@ -10,5 +11,6 @@ export const routes: Routes = [
   { path: 'registro', component: Registro },
   { path: 'transacoes', component: Transacoes, canActivate: [authGuard] },
   { path: 'transacoes/:id', component: TransacaoDetalhe, canActivate: [authGuard] },
+  { path: 'minha-conta', component: MinhaConta, canActivate: [authGuard] },
   { path: '', redirectTo: 'login', pathMatch: 'full' }
 ];

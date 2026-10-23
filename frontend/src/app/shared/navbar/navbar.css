@@ -1,0 +1,89 @@
+.navbar {
+  position: fixed;
+  z-index: 10;
+  top: 1.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  width: max-content;
+  max-width: calc(100vw - 2rem);
+  padding: 0.65rem 0.75rem;
+  background: color-mix(in srgb, var(--cor-card) 88%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cor-borda) 85%, transparent);
+  border-radius: 999px;
+  box-shadow: 0 14px 35px rgb(0 0 0 / 28%);
+  backdrop-filter: blur(14px);
+}
+
+.marca {
+  font-weight: 700;
+  color: var(--cor-texto);
+  white-space: nowrap;
+}
+
+.links {
+  display: flex;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.links a {
+  display: block;
+  color: var(--cor-texto-suave);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.55rem 0.85rem;
+  border-radius: 999px;
+  transition: color 0.2s, background 0.2s;
+}
+
+.links a:hover {
+  color: var(--cor-texto);
+}
+
+.links a.ativo {
+  color: var(--cor-primaria);
+  background: rgb(107 156 125 / 13%);
+}
+
+.botao-sair {
+  flex: 0 0 auto;
+  padding: 0.55rem 0.9rem;
+  background: transparent;
+  border: 1px solid var(--cor-borda);
+  border-radius: 999px;
+  color: var(--cor-texto-suave);
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.botao-sair:hover {
+  border-color: var(--cor-erro);
+  color: var(--cor-erro);
+}
+
+@media (max-width: 640px) {
+  .navbar {
+    gap: 0.5rem;
+    width: calc(100vw - 1rem);
+    justify-content: space-between;
+    padding: 0.5rem;
+  }
+
+  .marca {
+    display: none;
+  }
+
+  .links {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .links a {
+    padding-inline: 0.7rem;
+  }
+}
