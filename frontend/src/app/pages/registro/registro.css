@@ -31,9 +31,10 @@ h1 {
 }
 
 .campo input {
+  width: 100%;
   padding: 0.75rem 1rem;
   background: var(--cor-input-fundo);
-  border: 1px solid var(--cor-borda);
+  border: 1px solid var(--cor-borda-input);
   border-radius: 8px;
   color: var(--cor-texto);
   transition: border-color 0.2s, box-shadow 0.2s;
@@ -42,7 +43,41 @@ h1 {
 .campo input:focus {
   outline: none;
   border-color: var(--cor-primaria);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--cor-primaria) 20%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--cor-primaria) 16%, transparent);
+}
+
+.campo-senha {
+  position: relative;
+}
+
+.campo-senha input {
+  padding-right: 5.5rem;
+}
+
+.botao-senha {
+  position: absolute;
+  top: 50%;
+  right: 0.75rem;
+  transform: translateY(-50%);
+  padding: 0.2rem 0.35rem;
+  background: transparent;
+  border: 0;
+  color: var(--cor-primaria);
+  line-height: 0;
+}
+
+.botao-senha:hover {
+  color: var(--cor-texto);
+}
+
+.botao-senha svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
 }
 
 button[type="submit"] {

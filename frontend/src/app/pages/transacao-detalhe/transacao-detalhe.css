@@ -34,7 +34,7 @@ h1 {
 .campo select {
   padding: 0.75rem 1rem;
   background: var(--cor-input-fundo);
-  border: 1px solid var(--cor-borda);
+  border: 1px solid var(--cor-borda-input);
   border-radius: 8px;
   color: var(--cor-texto);
 }
@@ -43,7 +43,7 @@ h1 {
 .campo select:focus {
   outline: none;
   border-color: var(--cor-primaria);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--cor-primaria) 20%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--cor-primaria) 16%, transparent);
 }
 
 .erro {

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -17,17 +17,22 @@ export class Login {
   private router = inject(Router);
 
   erro = '';
+  mostrarSenha = signal(false);
 
   form = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     senha: ['', Validators.required],
   });
 
+  alternarSenha(): void {
+    this.mostrarSenha.update((visivel) => !visivel);
+  }
+
   onSubmit(): void {
     if (this.form.invalid) return;
 
     this.auth.login(this.form.getRawValue() as { email: string; senha: string }).subscribe({
-      next: () => this.router.navigate(['/transacoes']),
+      next: () => this.router.navigate(['/rotina']),
       error: () => this.erro = 'Email ou senha inválidos.',
     });
   }

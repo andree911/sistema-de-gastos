@@ -61,7 +61,7 @@ header button:hover {
 .form-transacao select {
   padding: 0.65rem 0.8rem;
   background: var(--cor-input-fundo);
-  border: 1px solid var(--cor-borda);
+  border: 1px solid var(--cor-borda-input);
   border-radius: 8px;
   color: var(--cor-texto);
   transition: border-color 0.2s, box-shadow 0.2s;
@@ -71,7 +71,7 @@ header button:hover {
 .form-transacao select:focus {
   outline: none;
   border-color: var(--cor-primaria);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--cor-primaria) 20%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--cor-primaria) 16%, transparent);
 }
 
 .form-transacao button[type="submit"] {

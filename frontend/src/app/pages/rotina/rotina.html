@@ -1,0 +1,71 @@
+<main class="rotina-container">
+  <header class="rotina-header">
+    <div>
+      <p class="eyebrow">{{ hoje | date:'EEEE, dd/MM' }}</p>
+      <h1>Minha rotina</h1>
+      <p class="subtitulo">Organize o dia e acompanhe o que importa.</p>
+    </div>
+    <button type="button" class="botao-adicionar" (click)="alternarFormulario()">
+      {{ formAberto() ? 'Fechar' : '+ Atividade' }}
+    </button>
+  </header>
+
+  <section class="progresso-card">
+    <div>
+      <span class="rotulo">Progresso do dia</span>
+      <strong>{{ concluidas() }} de {{ atividades().length }} concluídas</strong>
+    </div>
+    <div class="progresso-valor">{{ progresso() }}%</div>
+    <div class="barra"><span [style.width.%]="progresso()"></span></div>
+  </section>
+
+  @if (formAberto()) {
+    <form class="atividade-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="campo">
+        <label for="titulo-atividade">O que você quer fazer?</label>
+        <input id="titulo-atividade" type="text" formControlName="titulo" placeholder="Ex.: estudar matemática" />
+      </div>
+      <div class="campo">
+        <label for="categoria-atividade">Área</label>
+        <select id="categoria-atividade" formControlName="categoria">
+          @for (categoria of categorias; track categoria.valor) {
+            <option [value]="categoria.valor">{{ categoria.nome }}</option>
+          }
+        </select>
+      </div>
+      <button type="submit" [disabled]="form.invalid">Adicionar</button>
+    </form>
+  }
+
+  @if (erro()) {
+    <p class="erro">{{ erro() }}</p>
+  }
+
+  @if (atividades().length === 0) {
+    <section class="vazio">
+      <div class="vazio-icone">✦</div>
+      <h2>Seu dia está livre</h2>
+      <p>Adicione uma atividade para começar a construir sua rotina.</p>
+    </section>
+  } @else {
+    <section class="lista-atividades">
+      @for (atividade of atividades(); track atividade.id) {
+        <article class="atividade" [class.concluida]="atividade.concluida">
+          <button
+            type="button"
+            class="check"
+            [attr.aria-label]="atividade.concluida ? 'Marcar como pendente' : 'Marcar como concluída'"
+            (click)="alternarConclusao(atividade)"
+          >
+            {{ atividade.concluida ? '✓' : '' }}
+          </button>
+          <div class="atividade-conteudo">
+            <strong>{{ atividade.titulo }}</strong>
+            <span>{{ nomeCategoria(atividade.categoria) }}</span>
+          </div>
+          <button type="button" class="remover" aria-label="Remover atividade" (click)="remover(atividade)">×</button>
+        </article>
+      }
+    </section>
+  }
+</main>

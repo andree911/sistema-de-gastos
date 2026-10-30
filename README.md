@@ -39,6 +39,33 @@ Abra [http://localhost:4200](http://localhost:4200).
 - Saldo consolidado no topo da tela, com conversão de moeda via [Frankfurter API](https://frankfurter.dev)
 - Componentes de formulário customizados (select e date picker), sem depender de elementos nativos do navegador
 
+## Direcao do produto
+
+O projeto esta evoluindo de um controle de gastos para um acompanhante de rotina pessoal. A rotina sera o nucleo que conecta estudos, saude, financas e objetivos, sem remover as funcionalidades financeiras existentes.
+
+### Camadas do MVP
+
+1. **Rotina** - atividades do dia, habitos, tarefas e progresso.
+2. **Objetivos** - metas pessoais, academicas, de saude e financeiras.
+3. **Registros** - gastos, sessoes de estudo, refeicoes, exercicios e outros dados.
+4. **Insights** - resumos e recomendacoes baseados na rotina.
+
+### MVP implementado
+
+- **Rotina v1:** cadastro de atividades diarias com titulo e categoria (Pessoal, Estudos, Saude ou Financas).
+- Lista de atividades isolada por usuario, com conclusao, remocao e indicador de progresso do dia.
+- Nova tela inicial autenticada em `/rotina`, mantendo o modulo de transacoes em `/transacoes`.
+- Modelo de dados e API preparados para que estudos e saude sejam integrados a rotina futuramente.
+
+### Proximas etapas
+
+- Criar objetivos conectados as atividades.
+- Adicionar habitos e recorrencia.
+- Integrar sessoes de estudo a rotina.
+- Integrar registros basicos de saude.
+- Criar painel de insights diarios e semanais.
+- Preparar o produto como PWA/app mobile.
+
 ## Deploy
 
 Backend na VPS (Docker + Traefik) e frontend no Vercel: [DEPLOY.md](./DEPLOY.md).
