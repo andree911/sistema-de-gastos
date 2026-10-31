@@ -53,6 +53,108 @@ namespace ControleGastos.Migrations
                     b.ToTable("Atividades");
                 });
 
+            modelBuilder.Entity("ControleGastos.Models.LicaoConcluida", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("ConcluidaEm")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CursoSlug")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("LicaoSlug")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "CursoSlug", "LicaoSlug")
+                        .IsUnique();
+
+                    b.ToTable("LicoesConcluidas");
+                });
+
+            modelBuilder.Entity("ControleGastos.Models.PlanoEstudo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CursoSlug")
+                        .HasColumnType("text");
+
+                    b.Property<int>("MetaSessoesSemanais")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Objetivo")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Tema")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Titulo")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PlanosEstudo");
+                });
+
+            modelBuilder.Entity("ControleGastos.Models.SessaoEstudo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Data")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("DuracaoMinutos")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("LicaoSlug")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Observacoes")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int?>("PlanoEstudoId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlanoEstudoId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("SessoesEstudo");
+                });
+
             modelBuilder.Entity("ControleGastos.Models.Transacao", b =>
                 {
                     b.Property<int>("Id")
@@ -133,6 +235,46 @@ namespace ControleGastos.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ControleGastos.Models.LicaoConcluida", b =>
+                {
+                    b.HasOne("ControleGastos.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ControleGastos.Models.PlanoEstudo", b =>
+                {
+                    b.HasOne("ControleGastos.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ControleGastos.Models.SessaoEstudo", b =>
+                {
+                    b.HasOne("ControleGastos.Models.PlanoEstudo", "PlanoEstudo")
+                        .WithMany("Sessoes")
+                        .HasForeignKey("PlanoEstudoId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("ControleGastos.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PlanoEstudo");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("ControleGastos.Models.Transacao", b =>
                 {
                     b.HasOne("ControleGastos.Models.User", "User")
@@ -142,6 +284,11 @@ namespace ControleGastos.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ControleGastos.Models.PlanoEstudo", b =>
+                {
+                    b.Navigation("Sessoes");
                 });
 #pragma warning restore 612, 618
         }

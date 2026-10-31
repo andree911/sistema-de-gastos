@@ -55,14 +55,16 @@ O projeto esta evoluindo de um controle de gastos para um acompanhante de rotina
 - **Rotina v1:** cadastro de atividades diarias com titulo e categoria (Pessoal, Estudos, Saude ou Financas).
 - Lista de atividades isolada por usuario, com conclusao, remocao e indicador de progresso do dia.
 - Nova tela inicial autenticada em `/rotina`, mantendo o modulo de transacoes em `/transacoes`.
-- Modelo de dados e API preparados para que estudos e saude sejam integrados a rotina futuramente.
+- **Estudos v1:** trilha de aulas completas sobre metodos de estudo, com referencias para fontes confiaveis.
+- Planos de estudo por usuario, metas semanais, registro de sessoes e progresso de aulas.
 
 ### Proximas etapas
 
-- Criar objetivos conectados as atividades.
-- Adicionar habitos e recorrencia.
-- Integrar sessoes de estudo a rotina.
-- Integrar registros basicos de saude.
+- Adicionar habitos recorrentes e historico semanal a rotina.
+- Expandir a biblioteca de cursos com curadoria por tema e referencias.
+- Integrar os planos e sessoes de estudo a rotina diaria.
+- Adicionar registros manuais de sono, passos e treinos.
+- Criar um painel unificado de progresso e insights.
 - Criar painel de insights diarios e semanais.
 - Preparar o produto como PWA/app mobile.
 
