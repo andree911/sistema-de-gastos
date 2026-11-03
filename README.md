@@ -70,4 +70,4 @@ O projeto esta evoluindo de um controle de gastos para um acompanhante de rotina
 
 ## Deploy
 
-Backend na VPS (Docker + Traefik) e frontend no Vercel: [DEPLOY.md](./DEPLOY.md).
+Frontend na Vercel: [frontend-sandy-eight-67.vercel.app](https://frontend-sandy-eight-67.vercel.app). API na VPS: [srv1892430.hstgr.cloud:3029](https://srv1892430.hstgr.cloud:3029). Ambos responderam na última verificação. O processo de deploy está em [DEPLOY.md](./DEPLOY.md).
