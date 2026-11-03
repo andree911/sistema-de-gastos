@@ -1,0 +1,5 @@
+# Angular build cache
+.angular/
+
+# Local runtime logs
+*.log
