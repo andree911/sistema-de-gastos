@@ -20,6 +20,7 @@ export class Navbar {
   links: LinkNavegacao[] = [
     { rota: '/rotina', rotulo: 'Rotina' },
     { rota: '/estudos', rotulo: 'Estudos' },
+    { rota: '/saude', rotulo: 'Saúde' },
     { rota: '/transacoes', rotulo: 'Transações' },
     { rota: '/minha-conta', rotulo: 'Minha conta' },
   ];

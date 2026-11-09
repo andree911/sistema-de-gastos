@@ -66,6 +66,7 @@
   color: var(--cor-erro);
 }
 
+@media (max-width: 900px) { .marca { display: none; } .navbar { gap: .5rem; } }
 @media (max-width: 640px) {
   .navbar {
     gap: 0.5rem;
@@ -81,7 +82,11 @@
 
   .links {
     flex: 1 1 100%;
-    justify-content: space-between;
+    justify-content: flex-start;
+    min-width: 0;
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: thin;
   }
 
   .links a {

@@ -58,7 +58,47 @@ O projeto esta evoluindo de um controle de gastos para um acompanhante de rotina
 - **Estudos v1:** trilha de aulas completas sobre metodos de estudo, com referencias para fontes confiaveis.
 - Planos de estudo por usuario, metas semanais, registro de sessoes e progresso de aulas.
 
-### Proximas etapas
+### Planejamento de estudos
+
+- Cada plano pode conter matérias e tópicos com data prevista opcional.
+- Tópicos têm os estados A estudar, Em andamento e Concluído.
+- Registrar estudo em um tópico vincula a sessão ao plano e acumula tempo e quantidade de sessões.
+- A primeira sessão inicia o tópico; a conclusão é marcada pelo usuário.
+- Excluir uma matéria ou tópico preserva as sessões no histórico.
+- O organizador permite criar tópicos próprios e explorar assuntos relacionados no Tesauro da UNESCO, guardando a referência da origem ao adicioná-los ao plano.
+- O tesauro oferece uma classificação multidisciplinar para descoberta e organização; não é currículo e não determina prioridade nem dificuldade de estudo.
+- Os termos exibidos do Tesauro da UNESCO são atribuídos à fonte e identificados sob a licença CC BY-SA 3.0 IGO. A busca e os subtemas dependem da API externa; tópicos já adicionados ao plano permanecem salvos no banco do usuário.
+- A migração `AddCatalogoTemasEstudo` adiciona a origem dos tópicos. Aplique as migrações com `dotnet ef database update` em cada ambiente antes de executar esta versão da API.
+
+### Acompanhamento da rotina
+
+- Navegação por data e semana, com contagem de atividades concluídas por dia.
+- Progresso diário, resumo semanal e filtros de atividades pendentes e concluídas.
+- Edição, conclusão, reabertura e adiamento para o dia seguinte sem duplicar a atividade.
+- Tópicos de estudo com data prevista aparecem na rotina, com acesso à área de estudos.
+- Esta etapa acompanha atividades individuais; hábitos recorrentes e sequências de dias ficam para uma próxima entrega.
+
+### Saúde e bem-estar
+
+- Diário por data com sono, passos, disposição e observações opcionais.
+- Registros de água (ml), refeições (calorias opcionais informadas pelo usuário) e exercícios (minutos).
+- Edição, exclusão e histórico de sete dias com resumo integrado à rotina.
+- Registros manuais, isolados por usuário. Sem estimativas automáticas de calorias ou sincronização com dispositivos nesta etapa.
+- A migração `AddDiarioSaude` deve ser aplicada antes de executar a API neste ambiente.
+
+### Contador nutricional
+
+- Busca por nome via USDA FoodData Central, seleção de gramas ou porções fornecidas pela fonte e montagem de refeições com vários alimentos.
+- Cálculo no servidor de calorias, proteínas, carboidratos e gorduras, com cópia dos valores por 100 g em cada item para preservar o histórico.
+- Edição das quantidades usa os valores salvos. Refeições antigas sem alimentos detalhados continuam disponíveis.
+- Fonte: [USDA FoodData Central](https://fdc.nal.usda.gov/), dados [CC0](https://fdc.nal.usda.gov/api-guide/). A busca, os nomes e as porções seguem o idioma escolhido na conta (pt-BR ou en-US), mantendo os nomes originais disponíveis para conferência.
+- Tradução automática de termos alimentares via [MyMemory](https://mymemory.translated.net/doc/spec.php), com cache persistente em `TraducoesNutricionais`. Somente os termos da busca e as descrições públicas dos alimentos/porções são traduzidos; notas pessoais e dados de consumo não são enviados para tradução. Se indisponível, preserva o original e informa isso na busca.
+- A tradução gratuita tem limite de 5.000 caracteres/dia. `Nutrition__TranslationEmail` pode ser configurado pelo operador para a faixa de uso descrita na documentação do provedor; nenhum e-mail da conta do usuário é enviado automaticamente.
+- Aplicar também a migração `AddTraducoesNutricionais` antes de executar esta versão.
+- Em desenvolvimento, sem chave configurada, usa `DEMO_KEY` pública (30 consultas/hora e 50/dia por IP). Para uso contínuo, configure `Nutrition:UsdaApiKey` em User Secrets ou `Nutrition__UsdaApiKey` no ambiente do backend. A chave não vai para o frontend.
+- A migração `AddAlimentosRefeicao` deve ser aplicada antes de executar esta versão da API. Sem leitura de código de barras nesta entrega.
+
+### Próximos passos
 
 - Adicionar habitos recorrentes e historico semanal a rotina.
 - Expandir a biblioteca de cursos com curadoria por tema e referencias.

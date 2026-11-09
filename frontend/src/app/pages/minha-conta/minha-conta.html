@@ -29,6 +29,26 @@
         </div>
       </div>
 
+      <form class="idioma-card" (ngSubmit)="salvarIdioma()">
+        <div class="idioma-descricao">
+          <h2>Idioma</h2>
+          <p>Escolha seu idioma preferido.</p>
+        </div>
+        <label class="rotulo" for="idioma-preferido">Idioma preferido</label>
+        <app-select
+          id="idioma-preferido"
+          [formControl]="idioma"
+          [opcoes]="idiomas"
+          placeholder="Selecione um idioma"
+        />
+        <div class="idioma-acoes">
+          @if (idiomaSalvo() === idioma.value) {
+            <span class="idioma-status" role="status">Preferência salva neste dispositivo</span>
+          }
+          <button class="botao-salvar" type="submit" [disabled]="idioma.invalid">Salvar idioma</button>
+        </div>
+      </form>
+
     }
   </section>
 </main>

@@ -1,71 +1,69 @@
 <main class="rotina-container">
   <header class="rotina-header">
-    <div>
-      <p class="eyebrow">{{ hoje | date:'EEEE, dd/MM' }}</p>
-      <h1>Minha rotina</h1>
-      <p class="subtitulo">Organize o dia e acompanhe o que importa.</p>
-    </div>
-    <button type="button" class="botao-adicionar" (click)="alternarFormulario()">
-      {{ formAberto() ? 'Fechar' : '+ Atividade' }}
-    </button>
+    <div><h1>Minha rotina</h1><p class="subtitulo">Um dia de cada vez. Planeje, acompanhe e ajuste.</p></div>
+    <button type="button" class="botao-adicionar" (click)="abrir()">+ Atividade</button>
   </header>
-
-  <section class="progresso-card">
-    <div>
-      <span class="rotulo">Progresso do dia</span>
-      <strong>{{ concluidas() }} de {{ atividades().length }} concluídas</strong>
-    </div>
-    <div class="progresso-valor">{{ progresso() }}%</div>
-    <div class="barra"><span [style.width.%]="progresso()"></span></div>
-  </section>
-
+  <nav class="navegacao" aria-label="Escolher período">
+    <button type="button" (click)="navegar(-7)" aria-label="Semana anterior">‹</button>
+    <app-datepicker [ngModel]="dataSelecionada()" (ngModelChange)="selecionar($event)" />
+    <button type="button" (click)="hoje()">Hoje</button>
+    <button type="button" (click)="navegar(7)" aria-label="Próxima semana">›</button>
+  </nav>
+  <div class="semana" aria-label="Dias da semana">
+    @for (dia of dias(); track dia.data) {
+      <button type="button" [class.selecionado]="dia.data === dataSelecionada()" [attr.aria-current]="dia.data === dataSelecionada() ? 'date' : null" (click)="selecionar(dia.data)">
+        <span>{{ dia.nome }}</span><strong>{{ dia.dia }}</strong><small>{{ carregando() ? '…' : dia.concluidas + '/' + dia.total }}</small>
+      </button>
+    }
+  </div>
+  @if (!carregando() && !falhaCarga()) { <p class="resumo-semana">Nesta semana: {{ resumoSemana().concluidas }} de {{ resumoSemana().total }} atividades concluídas</p> }
+  <h2 class="data-dia">{{ tituloDia() }}</h2>
+  @if (erro()) { <p class="erro" role="alert">{{ erro() }}</p><button type="button" (click)="carregar()">Tentar novamente</button> }
+  @if (carregando()) { <p role="status">Carregando sua rotina...</p> }
+  @else if (!falhaCarga()) {
+    <section class="progresso-card" aria-label="Progresso do dia">
+      <div><span class="rotulo">Progresso do dia</span><strong>{{ concluidas() }} de {{ atividades().length }} concluídas</strong></div>
+      <div class="progresso-valor">{{ progresso() }}%</div>
+      <div class="barra" role="progressbar" [attr.aria-valuenow]="progresso()" aria-valuemin="0" aria-valuemax="100" aria-label="Atividades concluídas"><span [style.width.%]="progresso()"></span></div>
+    </section>
+  }
   @if (formAberto()) {
     <form class="atividade-form" [formGroup]="form" (ngSubmit)="onSubmit()">
-      <div class="campo">
-        <label for="titulo-atividade">O que você quer fazer?</label>
-        <input id="titulo-atividade" type="text" formControlName="titulo" placeholder="Ex.: estudar matemática" />
-      </div>
-      <div class="campo">
-        <label for="categoria-atividade">Área</label>
-        <select id="categoria-atividade" formControlName="categoria">
-          @for (categoria of categorias; track categoria.valor) {
-            <option [value]="categoria.valor">{{ categoria.nome }}</option>
-          }
-        </select>
-      </div>
-      <button type="submit" [disabled]="form.invalid">Adicionar</button>
+      <div class="campo"><label for="titulo-atividade">O que você quer fazer?</label><input id="titulo-atividade" formControlName="titulo" maxlength="200" placeholder="Ex.: caminhar por 20 minutos" /></div>
+      <div class="campo"><label>Área</label><app-select formControlName="categoria" [opcoes]="categorias" /></div>
+      <button type="submit" [disabled]="form.invalid || salvando()">{{ edicao() ? 'Salvar' : 'Adicionar' }}</button>
+      <button type="button" (click)="formAberto.set(false)">Cancelar</button>
     </form>
   }
-
-  @if (erro()) {
-    <p class="erro">{{ erro() }}</p>
-  }
-
-  @if (atividades().length === 0) {
-    <section class="vazio">
-      <div class="vazio-icone">✦</div>
-      <h2>Seu dia está livre</h2>
-      <p>Adicione uma atividade para começar a construir sua rotina.</p>
-    </section>
-  } @else {
-    <section class="lista-atividades">
-      @for (atividade of atividades(); track atividade.id) {
+  @if (!carregando() && !falhaCarga()) {
+    <div class="filtros" aria-label="Filtrar atividades">
+      @for (opcao of ['todas','pendentes','concluidas']; track opcao) { <button type="button" [attr.aria-pressed]="filtro() === opcao" (click)="filtro.set(opcao)">{{ opcao === 'concluidas' ? 'Concluídas' : opcao === 'pendentes' ? 'Pendentes' : 'Todas' }}</button> }
+    </div>
+    <section class="lista-atividades" aria-label="Atividades do dia">
+      @for (atividade of visiveis(); track atividade.id) {
         <article class="atividade" [class.concluida]="atividade.concluida">
-          <button
-            type="button"
-            class="check"
-            [attr.aria-label]="atividade.concluida ? 'Marcar como pendente' : 'Marcar como concluída'"
-            (click)="alternarConclusao(atividade)"
-          >
-            {{ atividade.concluida ? '✓' : '' }}
-          </button>
+          <button type="button" class="check" [attr.aria-label]="atividade.concluida ? 'Reabrir ' + atividade.titulo : 'Concluir ' + atividade.titulo" [attr.aria-pressed]="atividade.concluida" [disabled]="salvando()" (click)="atualizar(atividade)">{{ atividade.concluida ? '✓' : '' }}</button>
           <div class="atividade-conteudo">
-            <strong>{{ atividade.titulo }}</strong>
-            <span>{{ nomeCategoria(atividade.categoria) }}</span>
+            <strong>{{ atividade.titulo }}</strong><span>{{ nomeCategoria(atividade.categoria) }}</span>
+            <div class="acoes"><button type="button" (click)="abrir(atividade)" [disabled]="salvando()">Editar</button>@if (!atividade.concluida) { <button type="button" (click)="atualizar(atividade,true)" [disabled]="salvando()">Adiar para amanhã</button> }<button type="button" (click)="excluir.set(atividade)" [disabled]="salvando()">Excluir</button></div>
           </div>
-          <button type="button" class="remover" aria-label="Remover atividade" (click)="remover(atividade)">×</button>
         </article>
+      } @empty {
+        <div class="vazio"><h2>{{ atividades().length ? 'Nenhuma atividade neste filtro' : 'Como você quer organizar este dia?' }}</h2><p>{{ atividades().length ? 'Escolha outro filtro para ver suas atividades.' : 'Adicione uma atividade pessoal, de saúde, estudos ou finanças.' }}</p></div>
       }
     </section>
+  }
+  <app-resumo-saude [data]="dataSelecionada()" />
+  @if (erroEstudos()) { <p class="erro">{{ erroEstudos() }}</p> }
+  @if (estudosPrevistos().length) {
+    <section class="estudos-previstos"><h2>Estudos previstos</h2><p>Os tópicos planejados para este dia. Registre as sessões na área de estudos.</p>
+      @for (topico of estudosPrevistos(); track topico.id) { <div><strong>{{ topico.titulo }}</strong><span>{{ topico.materia }} · {{ topico.status === 'concluido' ? 'Concluído' : topico.status === 'em-andamento' ? 'Em andamento' : 'A estudar' }}</span></div> }
+      <a routerLink="/estudos">Abrir meus estudos</a>
+    </section>
+  }
+  @if (excluir(); as atividade) {
+    <div class="confirmacao" role="alertdialog" aria-modal="true" aria-labelledby="excluir-titulo">
+      <section><h2 id="excluir-titulo">Excluir atividade?</h2><p>{{ atividade.titulo }}</p><button type="button" (click)="excluir.set(null)" [disabled]="salvando()">Cancelar</button><button type="button" (click)="remover()" [disabled]="salvando()">Confirmar exclusão</button></section>
+    </div>
   }
 </main>

@@ -7,4 +7,6 @@ public record SessaoEstudoResponse(
     string? LicaoSlug,
     DateTime Data,
     int DuracaoMinutos,
-    string Observacoes);
+    string Observacoes,
+    int? TopicoEstudoId = null,
+    string? TopicoTitulo = null);

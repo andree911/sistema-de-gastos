@@ -23,9 +23,17 @@ public class AtividadesController : ControllerBase
     private int UserId => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
     [HttpGet]
-    public async Task<IActionResult> Listar([FromQuery] DateTime? data)
+    public async Task<IActionResult> Listar([FromQuery] DateTime? data, [FromQuery] DateTime? inicio, [FromQuery] DateTime? fim)
     {
         var atividades = _context.Atividades.Where(a => a.UserId == UserId);
+        if (inicio.HasValue || fim.HasValue)
+        {
+            if (!inicio.HasValue || !fim.HasValue || fim.Value.Date < inicio.Value.Date || (fim.Value.Date - inicio.Value.Date).TotalDays > 30)
+                return BadRequest("Informe um período de até 31 dias.");
+            var de = DateTime.SpecifyKind(inicio.Value.Date, DateTimeKind.Utc);
+            var ate = DateTime.SpecifyKind(fim.Value.Date.AddDays(1), DateTimeKind.Utc);
+            atividades = atividades.Where(a => a.Data >= de && a.Data < ate);
+        }
 
         if (data.HasValue)
         {
@@ -45,7 +53,7 @@ public class AtividadesController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Criar(AtividadeRequest request)
     {
-        if (string.IsNullOrWhiteSpace(request.Titulo))
+        if (string.IsNullOrWhiteSpace(request.Titulo) || request.Titulo.Trim().Length > 200 || !Enum.IsDefined(request.Categoria))
             return BadRequest("O tÃ­tulo da atividade Ã© obrigatÃ³rio.");
 
         var atividade = new Atividade
@@ -67,6 +75,8 @@ public class AtividadesController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> Atualizar(int id, AtividadeRequest request)
     {
+        if (string.IsNullOrWhiteSpace(request.Titulo) || request.Titulo.Trim().Length > 200 || !Enum.IsDefined(request.Categoria))
+            return BadRequest("Informe um título de até 200 caracteres e uma área válida.");
         var atividade = await _context.Atividades.FirstOrDefaultAsync(a => a.Id == id && a.UserId == UserId);
         if (atividade is null)
             return NotFound();

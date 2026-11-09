@@ -6,6 +6,7 @@ import { TransacaoDetalhe } from './pages/transacao-detalhe/transacao-detalhe';
 import { MinhaConta } from './pages/minha-conta/minha-conta';
 import { Rotina } from './pages/rotina/rotina';
 import { Estudos } from './pages/estudos/estudos';
+import { Saude } from './pages/saude/saude';
 import { authGuard } from './core/auth-guard';
 
 export const routes: Routes = [
@@ -16,5 +17,6 @@ export const routes: Routes = [
   { path: 'minha-conta', component: MinhaConta, canActivate: [authGuard] },
   { path: 'rotina', component: Rotina, canActivate: [authGuard] },
   { path: 'estudos', component: Estudos, canActivate: [authGuard] },
+  { path: 'saude', component: Saude, canActivate: [authGuard] },
   { path: '', redirectTo: 'login', pathMatch: 'full' }
 ];

@@ -11,6 +11,7 @@
       <small>nesta semana</small>
     </div>
   </header>
+  <app-planejamento-estudo [atualizacao]="planejamentoVersao()" (estudar)="estudarTopico($event)" />
 
   @if (erro()) {
     <p class="erro" role="alert">{{ erro() }}</p>
@@ -113,10 +114,10 @@
                 <li>
                   <div class="sessao-data">
                     <strong>{{ sessao.data | date:'dd/MM' }}</strong>
-                    <span>{{ sessao.data | date:'EEEE' }}</span>
+                    <span>{{ diaSemana(sessao.data) }}</span>
                   </div>
                   <div class="sessao-detalhe">
-                    <strong>{{ tituloLicao(sessao.licaoSlug) ?? sessao.planoTitulo ?? 'Estudo livre' }}</strong>
+                    <strong>{{ sessao.topicoTitulo ?? tituloLicao(sessao.licaoSlug) ?? sessao.planoTitulo ?? 'Estudo livre' }}</strong>
                     <span>{{ sessao.planoTitulo || 'Sem plano vinculado' }}</span>
                   </div>
                   <strong class="duracao">{{ formatarDuracao(sessao.duracaoMinutos) }}</strong>
@@ -195,17 +196,19 @@
           <p class="eyebrow">Acompanhe seu ritmo</p>
           <h2 id="registrar-titulo">Registrar sessão</h2>
           <form [formGroup]="sessaoForm" (ngSubmit)="registrarSessao()">
+            @if (topicoSelecionado(); as topico) {
+              @if (topico.planoId === +sessaoForm.controls.planoEstudoId.value!) {
+                <p>Estudando: <strong>{{ topico.titulo }}</strong> <button type="button" class="botao-texto" (click)="topicoSelecionado.set(null)">Desvincular tópico</button></p>
+              }
+            }
             <label for="sessao-plano">Plano</label>
-            <select id="sessao-plano" formControlName="planoEstudoId">
-              <option value="">Estudo livre</option>
-              @for (plano of planos(); track plano.id) { <option [value]="plano.id">{{ plano.titulo }}</option> }
-            </select>
+            <app-select formControlName="planoEstudoId" [opcoes]="opcoesPlanos()" placeholder="Selecione um plano" />
             <label for="sessao-duracao">Duração em minutos</label>
             <input id="sessao-duracao" type="number" min="1" max="1440" formControlName="duracaoMinutos" />
             <label for="sessao-data">Data</label>
-            <input id="sessao-data" type="date" formControlName="data" />
+            <app-datepicker formControlName="data" />
             <label for="sessao-notas">O que estudou? <span>(opcional)</span></label>
-            <textarea id="sessao-notas" rows="2" formControlName="observacoes" placeholder="Uma nota rápida sobre a sessão"></textarea>
+            <textarea id="sessao-notas" rows="4" formControlName="observacoes" placeholder="Uma nota rápida sobre a sessão"></textarea>
             <button type="submit" class="botao-primario" [disabled]="sessaoForm.invalid">Salvar sessão</button>
           </form>
         </section>

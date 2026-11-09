@@ -1,0 +1,27 @@
+﻿<section class="editor-refeicao" aria-labelledby="refeicao-titulo">
+  <h3 id="refeicao-titulo">{{ registro ? t.edit : t.create }}</h3>
+  <label for="nome-refeicao">{{ t.name }}<input id="nome-refeicao" [(ngModel)]="nome" maxlength="300" [placeholder]="t.mealExample" [disabled]="salvando()" /></label>
+  <form class="busca" (ngSubmit)="pesquisar()"><label for="buscar-alimento">{{ t.searchLabel }}<input id="buscar-alimento" name="busca" [(ngModel)]="busca" minlength="2" maxlength="100" [placeholder]="t.searchExample" [disabled]="salvando()" /></label><button type="submit" [disabled]="buscando() || salvando() || busca.trim().length < 2">{{ buscando() ? t.searching : t.search }}</button></form>
+  <p class="ajuda">{{ t.help }}</p>
+  @if (traducaoIndisponivel) { <p class="ajuda" role="status">{{ t.translatingUnavailable }}</p> }
+  @if (erro()) { <p class="erro" role="alert">{{ erro() }}</p> }
+  @if (buscando() || detalhando()) { <p role="status">{{ buscando() ? t.searchingFoods : t.loadingPortions }}</p> }
+  @if (resultados().length) { <ul class="resultados" [attr.aria-label]="t.results">@for (a of resultados(); track a.id) { <li><button type="button" (click)="escolher(a)" [disabled]="salvando()" [title]="a.nomeOriginal || a.nome"><strong>{{ a.nome }}</strong><span>{{ numero(a.calorias100g) }} kcal {{ t.per100 }}</span></button></li> }</ul> }
+  @else if (pesquisou()) { <p>{{ t.empty }}</p> }
+  @if (selecionado(); as a) {
+    <div class="selecionado"><strong>{{ a.nome }}</strong>@if (a.nomeOriginal && a.nomeOriginal !== a.nome) { <p>{{ t.original }}: {{ a.nomeOriginal }}</p> }
+      <p>{{ numero(a.calorias100g) }} kcal · P {{ numero(a.proteinas100g) }} g · C {{ numero(a.carboidratos100g) }} g · G {{ numero(a.gorduras100g) }} g {{ t.per100 }}</p>
+      <label>{{ t.measure }}<app-select [ngModel]="porcao" (ngModelChange)="porcao = $event; quantidade = porcao < 0 ? 100 : 1" [opcoes]="opcoesPorcoes" [ariaLabel]="t.measure" /></label>
+      <label for="quantidade-alimento">{{ porcao < 0 ? t.amountGrams : t.amountPortions }}<input id="quantidade-alimento" type="number" [(ngModel)]="quantidade" min="0.01" max="5000" step="0.01" /></label>
+      <p>{{ numero(gramas) }} g · {{ numero(a.calorias100g * gramas / 100) }} kcal</p>
+      <button type="button" (click)="adicionar()" [disabled]="salvando() || !(gramas > 0 && gramas <= 5000) || itens().length >= 20">{{ t.add }}</button>
+    </div>
+  }
+  <h4>{{ t.foods }}</h4>
+  <ul class="itens">@for (item of itens(); track item.chave) { <li><strong>{{ item.nome }}</strong><div><label [for]="'gramas-' + item.chave">{{ t.grams }}<input [id]="'gramas-' + item.chave" type="number" [ngModel]="item.gramas" (ngModelChange)="ajustar(item.chave, $event)" min="0.01" max="5000" step="0.01" [disabled]="salvando()" /></label><span>{{ numero(item.calorias100g * item.gramas / 100) }} kcal</span><button type="button" (click)="remover(item.chave)" [disabled]="salvando()" [attr.aria-label]="t.remove + ' ' + item.nome">{{ t.remove }}</button></div></li> } @empty { <li>{{ t.emptyMeal }}</li> }</ul>
+  @if (itens().length) { <div class="totais" aria-live="polite"><strong>{{ numero(totais.calorias) }} kcal</strong><span>{{ t.proteins }}: {{ numero(totais.proteinas) }} g</span><span>{{ t.carbs }}: {{ numero(totais.carboidratos) }} g</span><span>{{ t.fats }}: {{ numero(totais.gorduras) }} g</span></div> }
+  @else if (registro) { <p class="ajuda">{{ t.legacy }}</p><label for="calorias-anteriores">{{ t.manualCalories }}<input id="calorias-anteriores" type="number" [(ngModel)]="caloriasAnteriores" min="0" max="20000" step="1" [disabled]="salvando()" /></label> }
+  @if (!valido && !salvando()) { <p class="ajuda">{{ t.complete }}</p> }
+  <div class="acoes"><button type="button" class="primario" (click)="salvar()" [disabled]="!valido || salvando()" [attr.aria-busy]="salvando()">{{ salvando() ? t.saving : t.save }}</button><button type="button" (click)="cancelar.emit()" [disabled]="salvando()">{{ t.cancel }}</button></div>
+  <p class="fonte">{{ t.source }}: <a href="https://fdc.nal.usda.gov/" target="_blank" rel="noopener noreferrer">USDA FoodData Central</a> · CC0. {{ t.history }}</p>
+</section>

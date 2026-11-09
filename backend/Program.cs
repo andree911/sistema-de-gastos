@@ -3,6 +3,9 @@ using ControleGastos.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using ControleGastos.Services;
+using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +39,18 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddAuthorization();
+builder.Services.AddMemoryCache();
+builder.Services.AddHttpClient<TraducaoNutricionalService>(client => { client.BaseAddress = new Uri("https://api.mymemory.translated.net/"); client.Timeout = TimeSpan.FromSeconds(8); });
+builder.Services.AddHttpClient<CatalogoTemasService>(client => { client.Timeout = TimeSpan.FromSeconds(12); });
+builder.Services.AddHttpClient<AlimentosService>(client => {
+    client.BaseAddress = new Uri("https://api.nal.usda.gov/fdc/v1/");
+    client.Timeout = TimeSpan.FromSeconds(20);
+});
+builder.Services.AddRateLimiter(options => {
+    options.RejectionStatusCode = 429;
+    options.AddFixedWindowLimiter("alimentos", limiter => { limiter.PermitLimit = 20; limiter.Window = TimeSpan.FromMinutes(1); limiter.QueueLimit = 0; });
+    options.AddFixedWindowLimiter("catalogo-estudos", limiter => { limiter.PermitLimit = 30; limiter.Window = TimeSpan.FromMinutes(1); limiter.QueueLimit = 0; });
+});
 builder.Services.AddControllers();
 
 var app = builder.Build();
@@ -43,6 +58,7 @@ var app = builder.Build();
 app.UseCors("Frontend");
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseRateLimiter();
 app.MapControllers();
 
 if (app.Environment.IsProduction())

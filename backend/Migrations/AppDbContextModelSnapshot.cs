@@ -53,6 +53,88 @@ namespace ControleGastos.Migrations
                     b.ToTable("Atividades");
                 });
 
+            modelBuilder.Entity("ControleGastos.Models.DiarioSaude", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateOnly>("Data")
+                        .HasColumnType("date");
+
+                    b.Property<int?>("Disposicao")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Observacoes")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<int?>("Passos")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("SonoMinutos")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "Data")
+                        .IsUnique();
+
+                    b.ToTable("DiariosSaude");
+                });
+
+            modelBuilder.Entity("ControleGastos.Models.ItemRefeicao", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AlimentoId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Calorias100g")
+                        .HasPrecision(12, 4)
+                        .HasColumnType("numeric(12,4)");
+
+                    b.Property<decimal>("Carboidratos100g")
+                        .HasPrecision(12, 4)
+                        .HasColumnType("numeric(12,4)");
+
+                    b.Property<decimal>("Gorduras100g")
+                        .HasPrecision(12, 4)
+                        .HasColumnType("numeric(12,4)");
+
+                    b.Property<decimal>("Gramas")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<decimal>("Proteinas100g")
+                        .HasPrecision(12, 4)
+                        .HasColumnType("numeric(12,4)");
+
+                    b.Property<int>("RegistroSaudeId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RegistroSaudeId");
+
+                    b.ToTable("ItensRefeicao");
+                });
+
             modelBuilder.Entity("ControleGastos.Models.LicaoConcluida", b =>
                 {
                     b.Property<int>("Id")
@@ -81,6 +163,29 @@ namespace ControleGastos.Migrations
                         .IsUnique();
 
                     b.ToTable("LicoesConcluidas");
+                });
+
+            modelBuilder.Entity("ControleGastos.Models.MateriaEstudo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("PlanoEstudoId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Titulo")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("character varying(160)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlanoEstudoId");
+
+                    b.ToTable("MateriasEstudo");
                 });
 
             modelBuilder.Entity("ControleGastos.Models.PlanoEstudo", b =>
@@ -119,6 +224,43 @@ namespace ControleGastos.Migrations
                     b.ToTable("PlanosEstudo");
                 });
 
+            modelBuilder.Entity("ControleGastos.Models.RegistroSaude", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("Calorias")
+                        .HasColumnType("integer");
+
+                    b.Property<DateOnly>("Data")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Descricao")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<int?>("Quantidade")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Tipo")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "Data");
+
+                    b.ToTable("RegistrosSaude");
+                });
+
             modelBuilder.Entity("ControleGastos.Models.SessaoEstudo", b =>
                 {
                     b.Property<int>("Id")
@@ -143,6 +285,9 @@ namespace ControleGastos.Migrations
                     b.Property<int?>("PlanoEstudoId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("TopicoEstudoId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
@@ -150,9 +295,75 @@ namespace ControleGastos.Migrations
 
                     b.HasIndex("PlanoEstudoId");
 
+                    b.HasIndex("TopicoEstudoId");
+
                     b.HasIndex("UserId");
 
                     b.ToTable("SessoesEstudo");
+                });
+
+            modelBuilder.Entity("ControleGastos.Models.TopicoEstudo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CodigoCatalogo")
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.Property<DateOnly?>("DataPrevista")
+                        .HasColumnType("date");
+
+                    b.Property<string>("FonteCatalogo")
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
+
+                    b.Property<int>("MateriaEstudoId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("Titulo")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MateriaEstudoId");
+
+                    b.HasIndex("MateriaEstudoId", "FonteCatalogo", "CodigoCatalogo")
+                        .IsUnique()
+                        .HasFilter("\"FonteCatalogo\" IS NOT NULL AND \"CodigoCatalogo\" IS NOT NULL");
+
+                    b.ToTable("TopicosEstudo");
+                });
+
+            modelBuilder.Entity("ControleGastos.Models.TraducaoNutricional", b =>
+                {
+                    b.Property<string>("Chave")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("Original")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<string>("Traducao")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)");
+
+                    b.HasKey("Chave");
+
+                    b.ToTable("TraducoesNutricionais");
                 });
 
             modelBuilder.Entity("ControleGastos.Models.Transacao", b =>
@@ -235,6 +446,28 @@ namespace ControleGastos.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ControleGastos.Models.DiarioSaude", b =>
+                {
+                    b.HasOne("ControleGastos.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ControleGastos.Models.ItemRefeicao", b =>
+                {
+                    b.HasOne("ControleGastos.Models.RegistroSaude", "RegistroSaude")
+                        .WithMany("Alimentos")
+                        .HasForeignKey("RegistroSaudeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("RegistroSaude");
+                });
+
             modelBuilder.Entity("ControleGastos.Models.LicaoConcluida", b =>
                 {
                     b.HasOne("ControleGastos.Models.User", "User")
@@ -246,7 +479,29 @@ namespace ControleGastos.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ControleGastos.Models.MateriaEstudo", b =>
+                {
+                    b.HasOne("ControleGastos.Models.PlanoEstudo", "PlanoEstudo")
+                        .WithMany()
+                        .HasForeignKey("PlanoEstudoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PlanoEstudo");
+                });
+
             modelBuilder.Entity("ControleGastos.Models.PlanoEstudo", b =>
+                {
+                    b.HasOne("ControleGastos.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ControleGastos.Models.RegistroSaude", b =>
                 {
                     b.HasOne("ControleGastos.Models.User", "User")
                         .WithMany()
@@ -264,6 +519,11 @@ namespace ControleGastos.Migrations
                         .HasForeignKey("PlanoEstudoId")
                         .OnDelete(DeleteBehavior.SetNull);
 
+                    b.HasOne("ControleGastos.Models.TopicoEstudo", "TopicoEstudo")
+                        .WithMany("Sessoes")
+                        .HasForeignKey("TopicoEstudoId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("ControleGastos.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
@@ -272,7 +532,20 @@ namespace ControleGastos.Migrations
 
                     b.Navigation("PlanoEstudo");
 
+                    b.Navigation("TopicoEstudo");
+
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ControleGastos.Models.TopicoEstudo", b =>
+                {
+                    b.HasOne("ControleGastos.Models.MateriaEstudo", "MateriaEstudo")
+                        .WithMany("Topicos")
+                        .HasForeignKey("MateriaEstudoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MateriaEstudo");
                 });
 
             modelBuilder.Entity("ControleGastos.Models.Transacao", b =>
@@ -286,7 +559,22 @@ namespace ControleGastos.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ControleGastos.Models.MateriaEstudo", b =>
+                {
+                    b.Navigation("Topicos");
+                });
+
             modelBuilder.Entity("ControleGastos.Models.PlanoEstudo", b =>
+                {
+                    b.Navigation("Sessoes");
+                });
+
+            modelBuilder.Entity("ControleGastos.Models.RegistroSaude", b =>
+                {
+                    b.Navigation("Alimentos");
+                });
+
+            modelBuilder.Entity("ControleGastos.Models.TopicoEstudo", b =>
                 {
                     b.Navigation("Sessoes");
                 });

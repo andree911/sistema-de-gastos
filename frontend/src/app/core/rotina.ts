@@ -28,6 +28,9 @@ export class Rotina {
   listar(data: string): Observable<Atividade[]> {
     return this.http.get<Atividade[]>(`${API_URL}/atividades`, { params: { data } });
   }
+  listarPeriodo(inicio: string, fim: string): Observable<Atividade[]> {
+    return this.http.get<Atividade[]>(`${API_URL}/atividades`, { params: { inicio, fim } });
+  }
 
   criar(request: AtividadeRequest): Observable<Atividade> {
     return this.http.post<Atividade>(`${API_URL}/atividades`, request);

@@ -1,0 +1,43 @@
+<section class="planejamento" aria-labelledby="planejamento-titulo">
+  <header><div><h2 id="planejamento-titulo">Meu planejamento</h2><p>Organize as matérias e escolha seu próximo passo.</p></div></header>
+  @if (erro()) { <p class="erro" role="alert">{{ erro() }}</p><button type="button" (click)="carregar()">Tentar novamente</button> }
+  @if (carregando()) { <p role="status">Carregando planejamento...</p> }
+  @else if (!erro() || planos().length) {
+    @if (!planos().length) { <p>Crie seu primeiro plano em “Meus planos” para organizar matérias e tópicos.</p> }
+    @else {
+      <label>Plano de estudo<app-select [ngModel]="planoId" (ngModelChange)="planoId = $event; mudarPlano()" [opcoes]="opcoesPlanos" /></label>
+      <div class="resumo"><strong>{{ concluidos }} de {{ topicos.length }} tópicos concluídos</strong><span>{{ minutos }} min registrados</span></div>
+      <progress [value]="concluidos" [max]="topicos.length || 1" aria-label="Tópicos concluídos"></progress>
+      <form class="nova-materia" (ngSubmit)="adicionarMateria()"><label>Nova matéria<input name="materia" [(ngModel)]="novaMateria" maxlength="160" placeholder="Ex.: Matemática" required /></label><button [disabled]="salvando() || !novaMateria.trim()">Adicionar matéria</button></form>
+      @for (materia of materiasPlano; track materia.id) {
+        <article class="materia"><header><h3>{{ materia.titulo }}</h3><div><button type="button" (click)="alternarCatalogo(materia.id)">{{ catalogoMateriaId() === materia.id ? 'Fechar catálogo' : 'Explorar temas' }}</button><button type="button" (click)="editar(materia.id)">Adicionar tópico</button><button type="button" class="perigo" (click)="exclusao.set({ tipo: 'materia', id: materia.id })">Excluir matéria</button></div></header>
+          @if (catalogoMateriaId() === materia.id) {
+            <section class="explorador" aria-label="Explorar temas para adicionar ao plano">
+              <div><h4>Encontre subtemas</h4><p>Pesquise um assunto e adicione ao seu plano. Você também pode criar tópicos manualmente.</p></div>
+              <form class="busca-catalogo" (ngSubmit)="buscarCatalogo()"><label for="busca-catalogo">Tema ou assunto<input id="busca-catalogo" name="buscaCatalogo" [(ngModel)]="buscaCatalogo" minlength="2" maxlength="100" placeholder="Ex.: matemática, fotografia, economia" /></label><button type="submit" [disabled]="buscaCatalogo.trim().length < 2 || carregandoCatalogo() || salvando()">{{ carregandoCatalogo() ? 'Buscando…' : 'Buscar temas' }}</button></form>
+              <p class="nota-catalogo">O catálogo agrupa assuntos relacionados; não define prioridade nem dificuldade de estudo.</p>
+              @if (erroCatalogo()) { <p class="erro" role="alert">{{ erroCatalogo() }}</p> }
+              @if (carregandoCatalogo()) { <p role="status">Buscando no catálogo…</p> }
+              <ul class="lista-catalogo">@for (tema of resultadosCatalogo(); track tema.codigo) {
+                <li class="tema-catalogo"><div class="tema-linha"><div><strong>{{ tema.titulo }}</strong>@if (tema.tituloOriginal && tema.tituloOriginal !== tema.titulo) { <small>{{ tema.tituloOriginal }}</small> }</div><div class="acoes-tema"><button type="button" (click)="adicionarTemaCatalogo(materia, tema)" [disabled]="salvando() || temaAdicionado(materia, tema)">{{ temaAdicionado(materia, tema) ? 'Já está no plano' : 'Adicionar' }}</button><button type="button" (click)="alternarSubtemas(tema)" [attr.aria-expanded]="subtemasAbertos().has(tema.codigo)">{{ carregandoSubtemas() === tema.codigo ? 'Carregando…' : subtemasAbertos().has(tema.codigo) ? 'Ocultar subtemas' : 'Ver subtemas' }}</button></div></div>
+                  @if (subtemasAbertos().has(tema.codigo)) { <ul class="lista-subtemas">@for (subtema of subtemasCatalogo()[tema.codigo] ?? []; track subtema.codigo) { <li><div><strong>{{ subtema.titulo }}</strong>@if (subtema.tituloOriginal && subtema.tituloOriginal !== subtema.titulo) { <small>{{ subtema.tituloOriginal }}</small> }</div><button type="button" (click)="adicionarTemaCatalogo(materia, subtema)" [disabled]="salvando() || temaAdicionado(materia, subtema)">{{ temaAdicionado(materia, subtema) ? 'Já está no plano' : 'Adicionar' }}</button></li> } @empty { <li>Este assunto não tem subtemas listados no catálogo.</li> }</ul> }
+                </li>
+              } @empty { @if (resultadosCatalogo().length === 0 && buscaCatalogo.trim().length >= 2 && !carregandoCatalogo() && !erroCatalogo()) { <li>Nenhum tema encontrado. Você pode adicioná-lo manualmente.</li> } }</ul>
+              <p class="credito-catalogo">Catálogo: <a href="https://vocabularies.unesco.org/" target="_blank" rel="noopener noreferrer">UNESCO Thesaurus</a> · licença CC BY-SA 3.0 IGO.</p>
+            </section>
+          }
+          @for (topico of materia.topicos; track topico.id) {
+            <div class="topico"><div><strong>{{ topico.titulo }}</strong><p>{{ topico.sessoes }} sessões · {{ topico.minutos }} min @if (topico.dataPrevista) { · Previsto: {{ formatarData(topico.dataPrevista) }} }</p>@if (topico.fonteCatalogo === 'unesco' && topico.codigoCatalogo) { <a class="credito-tema" [href]="'https://vocabularies.unesco.org/thesaurus/' + topico.codigoCatalogo" target="_blank" rel="noopener noreferrer">Fonte: UNESCO Thesaurus · CC BY-SA 3.0 IGO</a> }</div>
+              <app-select [ngModel]="topico.status" (ngModelChange)="alterarStatus(materia, topico, $event)" [opcoes]="statusOpcoes" [disabled]="salvando()" />
+              <div class="acoes"><button type="button" (click)="estudar.emit({ planoId: materia.planoEstudoId, topicoId: topico.id, titulo: topico.titulo })">Registrar estudo</button><button type="button" (click)="editar(materia.id, topico)">Editar</button><button type="button" class="perigo" (click)="exclusao.set({ tipo: 'topico', id: topico.id })">Excluir</button></div>
+            </div>
+          } @empty { <p>Adicione os tópicos que você pretende estudar nesta matéria.</p> }
+          @if (materiaEdicao === materia.id) {
+            <form class="editor" (ngSubmit)="salvar()"><h4>{{ topicoId ? 'Editar tópico' : 'Novo tópico' }}</h4><label>Título<input name="titulo" [(ngModel)]="titulo" maxlength="200" required /></label><label>Status<app-select name="status" [(ngModel)]="status" [opcoes]="statusOpcoes" /></label><label>Data prevista (opcional)<app-datepicker name="data" [(ngModel)]="data" /></label>@if (data) { <button type="button" (click)="data = ''">Remover data</button> }<div class="acoes"><button type="submit" [disabled]="salvando() || !titulo.trim()">Salvar tópico</button><button type="button" (click)="materiaEdicao = null">Cancelar</button></div></form>
+          }
+        </article>
+      } @empty { <p>Seu plano ainda não tem matérias. Comece por uma área que você quer estudar.</p> }
+    }
+  }
+  @if (exclusao()) { <div class="confirmacao" role="alertdialog" aria-modal="true" aria-label="Confirmar exclusão"><div><h3>Excluir {{ exclusao()?.tipo === 'materia' ? 'matéria e seus tópicos' : 'tópico' }}?</h3><p>As sessões registradas serão preservadas no histórico.</p><div class="acoes"><button type="button" (click)="exclusao.set(null)" [disabled]="salvando()">Cancelar</button><button type="button" class="perigo" (click)="excluir()" [disabled]="salvando()">Confirmar exclusão</button></div></div></div> }
+</section>

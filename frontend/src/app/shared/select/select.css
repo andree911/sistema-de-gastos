@@ -61,7 +61,7 @@
   color: var(--cor-texto);
 }
 
-.select-opcao:hover {
+.select-opcao:hover, .select-opcao.ativa {
   background: color-mix(in srgb, var(--cor-primaria) 15%, transparent);
 }
 

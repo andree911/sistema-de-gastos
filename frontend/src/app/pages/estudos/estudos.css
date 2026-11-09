@@ -60,9 +60,10 @@ h4 { margin: 1.5rem 0 .55rem; font-size: 1rem; }
 .form-plano { padding: .9rem 0; border-bottom: 1px solid var(--cor-borda); margin-bottom: .9rem; }
 .form-plano label, .registrar-card label { margin-top: .25rem; color: var(--cor-texto-suave); font-size: .75rem; font-weight: 700; }
 .form-plano label span, .registrar-card label span { font-weight: 400; }
-.form-plano input, .form-plano select, .form-plano textarea, .registrar-card input, .registrar-card select, .registrar-card textarea { width: 100%; min-height: 42px; padding: .65rem .75rem; background: var(--cor-input-fundo); border: 1px solid var(--cor-borda-input); border-radius: 8px; color: var(--cor-texto); font: inherit; font-size: .84rem; }
-.form-plano textarea, .registrar-card textarea { resize: vertical; }
-.form-plano input:focus-visible, .form-plano textarea:focus-visible, .registrar-card input:focus-visible, .registrar-card select:focus-visible, .registrar-card textarea:focus-visible, button:focus-visible, a:focus-visible, summary:focus-visible { outline: 2px solid var(--cor-primaria); outline-offset: 2px; }
+.form-plano :is(input,select,textarea), .registrar-card :is(input,textarea) { width: 100%; min-height: 42px; padding: .65rem .75rem; background: var(--cor-input-fundo); border: 1px solid var(--cor-borda-input); border-radius: 8px; color: var(--cor-texto); font: inherit; font-size: .84rem; }
+.registrar-card app-select, .registrar-card app-datepicker { display: block; width: 100%; }
+.form-plano textarea, .registrar-card textarea { resize: none; field-sizing: content; overflow: hidden; }
+:is(input,textarea,select,button,a,summary):focus-visible { outline: 2px solid var(--cor-primaria); outline-offset: 2px; }
 .acoes-form { justify-content: flex-end; margin-top: .45rem; }
 .registrar-card { border-top: 2px solid color-mix(in srgb, var(--cor-primaria) 60%, var(--cor-borda)); }
 .registrar-card h2 { margin-bottom: 1rem; }
@@ -70,13 +71,14 @@ h4 { margin: 1.5rem 0 .55rem; font-size: 1rem; }
 .vazio, .vazio-planos, .estado { color: var(--cor-texto-suave); font-size: .88rem; line-height: 1.5; }
 .vazio-planos { padding: .8rem 0 .2rem; }
 .vazio-planos p { margin: 0 0 .8rem; }
-.lista-sessoes li { padding: .55rem 0; border-top: 1px solid var(--cor-borda); }
-.sessao-data, .sessao-detalhe { display: inline-grid; gap: .15rem; margin-right: .5rem; vertical-align: middle; }
+.lista-sessoes li { display: grid; grid-template-columns: 4.25rem minmax(0, 1fr) auto auto; align-items: center; gap: .65rem 1rem; padding: .8rem 0; border-top: 1px solid var(--cor-borda); }
+.sessao-data, .sessao-detalhe { display: grid; min-width: 0; gap: .15rem; }
 .sessao-data span, .sessao-detalhe span { color: var(--cor-texto-suave); font-size: .72rem; }
+.duracao { white-space: nowrap; }
 .erro { color: var(--cor-erro); }
 .confirmacao { position: fixed; z-index: 30; inset: 0; display: grid; place-items: center; padding: 1rem; background: rgb(0 0 0 / 65%); }
 .confirmacao-caixa { width: min(100%, 390px); padding: 1.4rem; background: var(--cor-card); border: 1px solid var(--cor-borda-input); border-radius: 14px; }
 .confirmacao-caixa p { color: var(--cor-texto-suave); font-size: .88rem; }
 .botao-perigo { background: var(--cor-erro); border: 0; color: #1a2420; }
 @media (max-width: 920px) { .estudos-grid { grid-template-columns: minmax(0, 1fr); } .coluna-planos { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; } }
-@media (max-width: 640px) { .estudos-container { margin-top: 6rem; padding: 0 .8rem; } .estudos-header { align-items: flex-start; } .resumo-semana { min-width: 112px; padding: .65rem; } .curso-topo { padding: 1rem; } .curso-topo h2 { font-size: 1.2rem; } .progresso-curso { width: 56px; height: 56px; } .curso-corpo { grid-template-columns: minmax(0, 1fr); } .lista-licoes { grid-template-columns: repeat(3, minmax(0, 1fr)); padding: .65rem; border-right: 0; border-bottom: 1px solid var(--cor-borda); } .item-licao { display: grid; justify-items: start; gap: .45rem; padding: .6rem; } .item-licao-texto strong { font-size: .72rem; } .licao-detalhe { padding: 1rem; } .acoes-licao > button, .coluna-planos { flex: 1 1 100%; } .coluna-planos { display: grid; grid-template-columns: minmax(0, 1fr); } .lista-sessoes li { grid-template-columns: 48px minmax(0, 1fr) auto; gap: .55rem; } .lista-sessoes .botao-texto { grid-column: 2 / -1; justify-self: end; } }
+@media (max-width: 640px) { .estudos-container { margin-top: 6rem; padding: 0 .8rem; } .estudos-header { align-items: flex-start; } .resumo-semana { min-width: 112px; padding: .65rem; } .curso-topo { padding: 1rem; } .curso-topo h2 { font-size: 1.2rem; } .progresso-curso { width: 56px; height: 56px; } .curso-corpo { grid-template-columns: minmax(0, 1fr); } .lista-licoes { grid-template-columns: repeat(3, minmax(0, 1fr)); padding: .65rem; border-right: 0; border-bottom: 1px solid var(--cor-borda); } .item-licao { display: grid; justify-items: start; gap: .45rem; padding: .6rem; } .item-licao-texto strong { font-size: .72rem; } .licao-detalhe { padding: 1rem; } .acoes-licao > button, .coluna-planos { flex: 1 1 100%; } .coluna-planos { display: grid; grid-template-columns: minmax(0, 1fr); } .lista-sessoes li { grid-template-columns: 48px minmax(0, 1fr) auto; gap: .55rem .75rem; } .sessao-data { grid-row: span 2; } .sessao-detalhe { grid-column: 2 / 4; } .duracao { grid-column: 2; } .lista-sessoes .botao-texto { grid-column: 3; grid-row: 2; justify-self: end; } }

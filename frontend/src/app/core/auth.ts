@@ -2,6 +2,7 @@ import { Service, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { API_URL } from './api.config';
+import { IdiomaService } from './idioma';
 
 export interface RegisterRequest {
   nome: string;
@@ -28,6 +29,7 @@ export interface Perfil {
 
 @Service()
 export class Auth {
+  private idioma = inject(IdiomaService);
   private http = inject(HttpClient);
 
   register(request: RegisterRequest): Observable<AuthResponse> {
@@ -43,7 +45,7 @@ export class Auth {
   }
 
   obterPerfil(): Observable<Perfil> {
-    return this.http.get<Perfil>(`${API_URL}/auth/me`);
+    return this.http.get<Perfil>(`${API_URL}/auth/me`).pipe(tap(perfil => this.idioma.carregar(perfil.id)));
   }
 
   logout(): void {

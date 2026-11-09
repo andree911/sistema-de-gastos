@@ -1,5 +1,5 @@
 <div class="select-customizado" [class.aberto]="aberto()" [class.desabilitado]="disabled()">
-  <button type="button" class="select-gatilho" (click)="toggle()">
+  <button type="button" class="select-gatilho" role="combobox" aria-haspopup="listbox" [attr.aria-label]="ariaLabel() || placeholder()" [attr.aria-expanded]="aberto()" [attr.aria-controls]="aberto() ? listaId : null" [attr.aria-activedescendant]="aberto() && opcoes().length ? listaId + '-' + ativo() : null" [disabled]="disabled()" (keydown)="tecla($event)" (click)="toggle()">
     <span>{{ opcaoSelecionada?.nome ?? placeholder() }}</span>
     <svg class="seta" viewBox="0 0 24 24" width="16" height="16">
       <path d="M7 10l5 5 5-5z" fill="currentColor" />
@@ -7,10 +7,14 @@
   </button>
 
   @if (aberto()) {
-    <ul class="select-lista">
-      @for (opcao of opcoes(); track opcao.valor) {
+    <ul class="select-lista" role="listbox" [id]="listaId" [attr.aria-label]="ariaLabel() || placeholder()">
+      @for (opcao of opcoes(); track opcao.valor; let indice = $index) {
         <li
           class="select-opcao"
+          role="option"
+          [id]="listaId + '-' + indice"
+          [attr.aria-selected]="opcao.valor === valorSelecionado()"
+          [class.ativa]="ativo() === indice"
           [class.selecionada]="opcao.valor === valorSelecionado()"
           (click)="selecionar(opcao)"
         >

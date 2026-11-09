@@ -113,7 +113,9 @@ public class EstudosController : ControllerBase
                 sessao.LicaoSlug,
                 sessao.Data,
                 sessao.DuracaoMinutos,
-                sessao.Observacoes))
+                sessao.Observacoes,
+                sessao.TopicoEstudoId,
+                sessao.TopicoEstudo == null ? null : sessao.TopicoEstudo.Titulo))
             .ToListAsync();
 
         return Ok(sessoes);
@@ -122,6 +124,14 @@ public class EstudosController : ControllerBase
     [HttpPost("sessoes")]
     public async Task<IActionResult> CriarSessao(SessaoEstudoRequest request)
     {
+        TopicoEstudo? topico = null;
+        if (request.TopicoEstudoId.HasValue)
+        {
+            topico = await _context.TopicosEstudo.Include(x => x.MateriaEstudo)
+                .FirstOrDefaultAsync(x => x.Id == request.TopicoEstudoId && x.MateriaEstudo.PlanoEstudo.UserId == UserId);
+            if (topico is null || topico.MateriaEstudo.PlanoEstudoId != request.PlanoEstudoId)
+                return BadRequest("O tópico deve pertencer ao plano selecionado.");
+        }
         if (request.DuracaoMinutos is < 1 or > 1440)
             return BadRequest("A duração deve ficar entre 1 e 1440 minutos.");
         if (request.PlanoEstudoId.HasValue && !await _context.PlanosEstudo
@@ -131,6 +141,7 @@ public class EstudosController : ControllerBase
         var sessao = new SessaoEstudo
         {
             PlanoEstudoId = request.PlanoEstudoId,
+            TopicoEstudoId = request.TopicoEstudoId,
             LicaoSlug = request.LicaoSlug,
             Data = DateTime.SpecifyKind(request.Data, DateTimeKind.Utc),
             DuracaoMinutos = request.DuracaoMinutos,
@@ -139,6 +150,7 @@ public class EstudosController : ControllerBase
         };
 
         _context.SessoesEstudo.Add(sessao);
+        if (topico?.Status == "a-estudar") topico.Status = "em-andamento";
         await _context.SaveChangesAsync();
         return CreatedAtAction(nameof(ListarSessoes), new SessaoEstudoResponse(
             sessao.Id, sessao.PlanoEstudoId, null, sessao.LicaoSlug, sessao.Data, sessao.DuracaoMinutos, sessao.Observacoes));

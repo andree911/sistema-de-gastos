@@ -1,0 +1,49 @@
+<main class="saude-container">
+  <header class="cabecalho"><div><h1>Saúde e bem-estar</h1><p>Observe seus hábitos e acompanhe como você se sente.</p></div><span class="selo">Seu diário pessoal</span></header>
+  <nav class="navegacao" aria-label="Data dos registros"><button type="button" (click)="navegar(-1)" [disabled]="salvando()" aria-label="Dia anterior">‹</button><app-datepicker [ngModel]="data()" (ngModelChange)="selecionar($event)" [disabled]="salvando()" /><button type="button" (click)="hoje()" [disabled]="salvando()">Hoje</button><button type="button" (click)="navegar(1)" [disabled]="salvando()" aria-label="Próximo dia">›</button></nav>
+  @if (erro()) { <p class="erro" role="alert">{{ erro() }}</p>@if (!dia()) { <button type="button" (click)="carregar()">Tentar novamente</button> } }
+  @if (aviso()) { <p class="aviso" role="status">{{ aviso() }}</p> }
+  @if (carregando()) { <p role="status">Carregando seu dia...</p> }
+  @else if (dia(); as dados) {
+    <section class="indicadores" aria-label="Resumo de saúde do dia">
+      <article><span>Sono</span><strong>{{ sono(dados.resumo.sonoMinutos) }}</strong><small>{{ dados.resumo.sonoMinutos === null ? 'Ainda não registrado' : 'Informado por você' }}</small></article>
+      <article><span>Água</span><strong>{{ litros(dados.resumo.aguaMl) }}</strong><small>Total registrado no dia</small></article>
+      <article><span>Movimento</span><strong>{{ dados.resumo.exercicioMinutos }} <small>min</small></strong><small>{{ dados.resumo.passos === null ? 'Passos não informados' : dados.resumo.passos.toLocaleString('pt-BR') + ' passos' }}</small></article>
+      <article><span>Calorias consumidas</span><strong>{{ dados.resumo.temCaloriasInformadas ? dados.resumo.caloriasInformadas : '—' }} <small>kcal</small></strong><small>{{ dados.resumo.refeicoes }} refeições registradas</small></article>
+    </section>
+    @if (dados.resumo.proteinas !== null) {
+      <section class="macros" aria-label="Macronutrientes do dia"><strong>Alimentos registrados no dia</strong><span>Proteínas: {{ dados.resumo.proteinas }} g</span><span>Carboidratos: {{ dados.resumo.carboidratos }} g</span><span>Gorduras: {{ dados.resumo.gorduras }} g</span>@if (dados.resumo.refeicoesSemAlimentos) { <small>{{ dados.resumo.refeicoesSemAlimentos }} refeição(ões) sem alimentos detalhados não entram nos macronutrientes.</small> }</section>
+    }
+    <div class="conteudo-grid">
+      <section class="card registros"><h2>Registros do dia</h2><p>Acrescente o que aconteceu ao longo do dia.</p>
+        <div class="agua-rapida"><span>Água</span><button type="button" (click)="agua(250)" [disabled]="salvando()">+ 250 ml</button><button type="button" (click)="agua(500)" [disabled]="salvando()">+ 500 ml</button><button type="button" (click)="abrir('agua')" [disabled]="salvando()">Outra quantidade</button></div>
+        <div class="acoes-registro"><button type="button" (click)="abrir('refeicao')" [disabled]="salvando()">+ Refeição</button><button type="button" (click)="abrir('exercicio')" [disabled]="salvando()">+ Exercício</button></div>
+        @if (registroAberto() && tipo() === 'refeicao') {
+          <app-editor-refeicao [data]="data()" [registro]="refeicaoEmEdicao()" (salvo)="refeicaoSalva()" (cancelar)="registroAberto.set(false)" (ocupacao)="ocupacaoRefeicao($event)" />
+        }
+        @if (registroAberto() && tipo() !== 'refeicao') {
+          <form class="editor" [formGroup]="registroForm" (ngSubmit)="salvarRegistro()"><h3>{{ registroId() ? 'Editar' : 'Registrar' }} {{ nomeTipo(tipo()).toLowerCase() }}</h3>
+            @if (tipo() !== 'agua') { <label for="saude-descricao">{{ tipo() === 'refeicao' ? 'O que você comeu?' : 'Qual exercício você fez?' }}<input id="saude-descricao" formControlName="descricao" maxlength="300" [placeholder]="tipo() === 'refeicao' ? 'Ex.: almoço — arroz, feijão e frango' : 'Ex.: caminhada'" /></label> }
+            @if (tipo() !== 'refeicao') { <label for="saude-quantidade">{{ tipo() === 'agua' ? 'Quantidade (ml)' : 'Duração (minutos)' }}<input id="saude-quantidade" type="number" min="1" [max]="tipo() === 'agua' ? 20000 : 1440" step="1" formControlName="quantidade" /></label> }
+            @if (tipo() === 'refeicao') { <label for="saude-calorias">Calorias (kcal, opcional)<input id="saude-calorias" type="number" min="0" max="20000" step="1" formControlName="calorias" placeholder="Informe se você souber" /></label><p class="ajuda">O total do dia soma apenas as calorias que você informar.</p> }
+            <div class="acoes"><button type="submit" class="primario" [disabled]="!registroValido() || salvando()">Salvar registro</button><button type="button" (click)="registroAberto.set(false)" [disabled]="salvando()">Cancelar</button></div>
+          </form>
+        }
+        <ul class="lista-registros">@for (registro of dados.registros; track registro.id) {
+          <li><div><strong>{{ registro.descricao || nomeTipo(registro.tipo) }}</strong><span>{{ registro.tipo === 'agua' ? registro.quantidade + ' ml de água' : registro.tipo === 'exercicio' ? registro.quantidade + ' min de exercício' : registro.calorias === null ? 'Refeição · calorias não informadas' : registro.calorias + ' kcal informadas' }}</span>@if (registro.alimentos.length) { <details><summary>Ver alimentos e nutrientes</summary><ul>@for (item of registro.alimentos; track item.id) { <li>{{ item.nome }} · {{ item.gramas }} g · {{ item.calorias }} kcal<br />P {{ item.proteinas }} g · C {{ item.carboidratos }} g · G {{ item.gorduras }} g</li> }</ul><a href="https://fdc.nal.usda.gov/" target="_blank" rel="noopener noreferrer">Fonte: USDA FoodData Central (CC0)</a></details> }</div><div class="acoes"><button type="button" (click)="abrir(registro.tipo, registro)" [disabled]="salvando()">Editar</button><button type="button" (click)="exclusao.set(registro)" [disabled]="salvando()">Excluir</button></div></li>
+        } @empty { <li class="vazio">Nenhum registro de água, refeição ou exercício neste dia. Comece pelo que fizer sentido para você.</li> }</ul>
+      </section>
+      <section class="card diario"><h2>Como foi seu dia?</h2><p>Registre seu sono, seus passos e como está sua disposição.</p>
+        <form [formGroup]="diarioForm" (ngSubmit)="salvarDiario()">
+          <div class="campos-duplos"><label for="sono-horas">Sono (horas)<input id="sono-horas" type="number" min="0" max="24" step="0.01" formControlName="sonoHoras" placeholder="Ex.: 7,5" /></label><label for="passos-dia">Passos<input id="passos-dia" type="number" min="0" max="200000" step="1" formControlName="passos" placeholder="Total do dia" /></label></div>
+          <label>Disposição<app-select formControlName="disposicao" [opcoes]="disposicoes" ariaLabel="Disposição no dia" placeholder="Como você está?" /></label>
+          <label for="saude-notas">Observações (opcional)<textarea id="saude-notas" rows="3" maxlength="2000" formControlName="observacoes" placeholder="Algo que você queira lembrar sobre este dia"></textarea></label>
+          <p class="ajuda">Preencha os campos que quiser. Deixe em branco o que não registrou.</p>
+          <button type="submit" class="primario" [disabled]="diarioForm.invalid || salvando()">{{ salvando() ? 'Salvando...' : 'Salvar diário' }}</button>
+        </form>
+      </section>
+    </div>
+    <section class="card historico"><h2>Seu histórico de 7 dias</h2><p>Período encerrado em {{ diaCurto(data()) }}. Selecione um dia para consultar seus registros.</p><div class="tabela-container"><table><thead><tr><th scope="col">Dia</th><th scope="col">Sono</th><th scope="col">Água</th><th scope="col">Exercício</th><th scope="col">Passos</th><th scope="col">Disposição</th></tr></thead><tbody>@for (dia of historico(); track dia.data) { <tr [class.atual]="dia.data === data()"><th scope="row"><button type="button" (click)="selecionar(dia.data)" [disabled]="salvando()">{{ diaCurto(dia.data) }}</button></th><td>{{ sono(dia.sonoMinutos) }}</td><td>{{ dia.temRegistro ? litros(dia.aguaMl) : '—' }}</td><td>{{ dia.temRegistro ? dia.exercicioMinutos + ' min' : '—' }}</td><td>{{ dia.passos === null ? '—' : dia.passos.toLocaleString('pt-BR') }}</td><td>{{ dia.disposicao === null ? '—' : disposicaoNome(dia.disposicao) }}</td></tr> }</tbody></table></div></section>
+  }
+  @if (exclusao(); as registro) { <div class="confirmacao" role="alertdialog" aria-modal="true" aria-labelledby="saude-excluir-titulo"><section><h2 id="saude-excluir-titulo">Excluir este registro?</h2><p>{{ registro.descricao || nomeTipo(registro.tipo) }}</p><div class="acoes"><button type="button" (click)="exclusao.set(null)" [disabled]="salvando()">Cancelar</button><button type="button" class="perigo" (click)="excluir()" [disabled]="salvando()">Confirmar exclusão</button></div></section></div> }
+</main>

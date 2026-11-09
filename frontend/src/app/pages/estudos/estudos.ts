@@ -4,9 +4,13 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { catchError, forkJoin, of } from 'rxjs';
 import { CURSOS_ESTUDO, LicaoEstudo } from '../../core/conteudo-estudo';
 import { EstudosService, LicaoConcluida, PlanoEstudo, PlanoEstudoRequest, SessaoEstudo } from '../../core/estudos';
+import { Datepicker } from '../../shared/datepicker/datepicker';
+import { OpcaoSelect, Select } from '../../shared/select/select';
+import { Auth } from '../../core/auth';
+import { PlanejamentoEstudo } from './planejamento';
 
 @Component({
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, Select, Datepicker, PlanejamentoEstudo],
   selector: 'app-estudos',
   styleUrl: './estudos.css',
   templateUrl: './estudos.html',
@@ -14,6 +18,10 @@ import { EstudosService, LicaoConcluida, PlanoEstudo, PlanoEstudoRequest, Sessao
 export class Estudos implements OnInit {
   private service = inject(EstudosService);
   private fb = inject(FormBuilder);
+  private auth = inject(Auth);
+  idioma = signal('pt-BR');
+  planejamentoVersao = signal(0);
+  topicoSelecionado = signal<{ planoId: number; topicoId: number; titulo: string } | null>(null);
 
   curso = CURSOS_ESTUDO[0];
   cursos = CURSOS_ESTUDO;
@@ -26,6 +34,10 @@ export class Estudos implements OnInit {
   planoAberto = signal(false);
   planoEmEdicao = signal<number | null>(null);
   removerPendente = signal<{ tipo: 'plano' | 'sessao'; id: number } | null>(null);
+  opcoesPlanos = computed<OpcaoSelect[]>(() => [
+    { valor: '', nome: 'Estudo livre' },
+    ...this.planos().map((plano) => ({ valor: String(plano.id), nome: plano.titulo })),
+  ]);
 
   planoForm = this.fb.group({
     titulo: ['', Validators.required],
@@ -54,6 +66,17 @@ export class Estudos implements OnInit {
 
   ngOnInit(): void {
     this.carregar();
+    this.auth.obterPerfil().subscribe({
+      next: (perfil) => {
+        const idioma = localStorage.getItem(`idioma-preferido:${perfil.id}`);
+        this.idioma.set(idioma === 'en-US' ? 'en-US' : 'pt-BR');
+      },
+      error: () => this.idioma.set('pt-BR'),
+    });
+  }
+
+  diaSemana(data: string): string {
+    return new Intl.DateTimeFormat(this.idioma(), { weekday: 'long' }).format(new Date(data));
   }
 
   selecionarLicao(licao: LicaoEstudo): void {
@@ -103,11 +126,18 @@ export class Estudos implements OnInit {
   }
 
   registrarSessaoDaLicao(): void {
+    this.topicoSelecionado.set(null);
     this.sessaoForm.patchValue({
       planoEstudoId: this.planoVinculadoAoCurso(),
       duracaoMinutos: this.licaoSelecionada().duracaoMinutos,
     });
-    this.registrarSessao();
+    this.registrarSessao(this.licaoSelecionada().slug);
+  }
+
+  estudarTopico(topico: { planoId: number; topicoId: number; titulo: string }): void {
+    this.topicoSelecionado.set(topico);
+    this.sessaoForm.patchValue({ planoEstudoId: String(topico.planoId) });
+    document.getElementById('registrar-titulo')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
   salvarPlano(): void {
@@ -134,19 +164,21 @@ export class Estudos implements OnInit {
     }
   }
 
-  registrarSessao(): void {
+  registrarSessao(licaoSlug: string | null = null): void {
     if (this.sessaoForm.invalid) return;
     const valores = this.sessaoForm.getRawValue();
     this.service
       .criarSessao({
         planoEstudoId: valores.planoEstudoId ? Number(valores.planoEstudoId) : null,
-        licaoSlug: this.licaoSelecionada().slug,
+        licaoSlug,
+        topicoEstudoId: this.topicoSelecionado()?.planoId === Number(valores.planoEstudoId) ? this.topicoSelecionado()?.topicoId : null,
         data: `${valores.data}T12:00:00Z`,
         duracaoMinutos: Number(valores.duracaoMinutos),
         observacoes: valores.observacoes?.trim() ?? '',
       })
       .subscribe({
         next: () => {
+          this.topicoSelecionado.set(null);
           this.sessaoForm.reset({ planoEstudoId: '', duracaoMinutos: 25, data: this.dataHoje(), observacoes: '' });
           this.carregar();
         },
@@ -190,6 +222,7 @@ export class Estudos implements OnInit {
 
   private carregar(): void {
     this.carregando.set(true);
+    this.erro.set('');
     forkJoin({
       planos: this.service.listarPlanos(),
       sessoes: this.service.listarSessoes(),
@@ -203,8 +236,8 @@ export class Estudos implements OnInit {
         this.planos.set(planos);
         this.sessoes.set(sessoes);
         this.licoesConcluidas.set(licoes);
-        this.erro.set('');
         this.carregando.set(false);
+        this.planejamentoVersao.update(v => v + 1);
       });
   }
 
