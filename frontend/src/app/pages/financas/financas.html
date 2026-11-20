@@ -1,0 +1,92 @@
+<main class="financas-container">
+  <header class="cabecalho">
+    <div><h1>Finanças do mês</h1><p>Veja o que entrou, o que saiu e quanto cabe em cada categoria.</p></div>
+    <a routerLink="/transacoes" class="botao destaque">Registrar transação</a>
+  </header>
+
+  <section class="periodo" aria-label="Período e moeda">
+    <button type="button" aria-label="Mês anterior" (click)="navegarMes(-1)" [disabled]="salvando() || mes() === '2000-01'">‹</button>
+    <div class="campo"><label for="mes-financas">Mês</label><input id="mes-financas" type="month" min="2000-01" max="2100-12" [ngModel]="mes()" (ngModelChange)="selecionarMes($event)" [disabled]="salvando()" /></div>
+    <button type="button" aria-label="Próximo mês" (click)="navegarMes(1)" [disabled]="salvando() || mes() === '2100-12'">›</button>
+    <div class="campo moeda"><label>Moeda</label><app-select ariaLabel="Moeda do resumo" [ngModel]="moeda()" (ngModelChange)="selecionarMoeda($event)" [opcoes]="moedas" [disabled]="salvando()" /></div>
+  </section>
+  <p class="nota">Valores separados por moeda, sem conversão cambial. O resultado considera somente o mês selecionado.</p>
+
+  @if (erroAcao()) { <p class="erro aviso" role="alert">{{ erroAcao() }}</p> }
+  @if (mensagem()) { <p class="sucesso aviso" role="status">{{ mensagem() }}</p> }
+  @if (carregando()) { <p role="status">Carregando suas finanças…</p> }
+  @else if (erro()) { <div class="aviso"><p class="erro" role="alert">{{ erro() }}</p><button type="button" (click)="carregar()">Tentar novamente</button></div> }
+  @else if (resumo(); as r) {
+    <section class="balanco" aria-label="Balanço mensal">
+      <h2>{{ tituloMes() }}</h2>
+      <dl><div><dt>Receitas</dt><dd>{{ r.receitas | currency:codigoMoeda() }}</dd></div><div><dt>Gastos</dt><dd>{{ r.gastos | currency:codigoMoeda() }}</dd></div><div class="resultado"><dt>Resultado do mês</dt><dd [class.erro]="r.saldo < 0">{{ r.saldo | currency:codigoMoeda() }}</dd></div></dl>
+    </section>
+
+    <section class="secao" aria-labelledby="categorias-titulo">
+      <header><div><h2 id="categorias-titulo">Gastos e orçamentos</h2><p>Defina um limite por categoria para este mês.</p></div><button type="button" (click)="abrirOrcamento()" [disabled]="salvando()">Definir orçamento</button></header>
+      @if (formOrcamentoAberto()) {
+        <form [formGroup]="formOrcamento" (ngSubmit)="salvarOrcamento()" class="formulario">
+          <div class="campo"><label for="orcamento-categoria">Categoria</label><input id="orcamento-categoria" formControlName="categoria" maxlength="100" list="categorias-financeiras" placeholder="Ex.: Alimentação" /><small>Use a mesma categoria das transações. Salvar substitui o limite existente.</small></div>
+          <div class="campo"><label for="orcamento-limite">Limite em {{ codigoMoeda() }}</label><input id="orcamento-limite" type="number" formControlName="limite" min="0.01" max="999999999" step="0.01" /></div>
+          <div class="acoes"><button class="destaque" type="submit" [disabled]="formOrcamento.invalid || salvando()">Salvar orçamento</button><button type="button" (click)="formOrcamentoAberto.set(false)" [disabled]="salvando()">Cancelar</button></div>
+        </form>
+      }
+      <datalist id="categorias-financeiras">@for (c of r.categorias; track c.categoria) { <option [value]="c.categoria"></option> }</datalist>
+      <div class="categorias">
+        @for (c of r.categorias; track c.categoria) {
+          <article class="categoria">
+            <div class="linha"><h3>{{ c.categoria }}</h3><strong>{{ c.gasto | currency:codigoMoeda() }}</strong></div>
+            @if (c.limite !== null) {
+              <progress [value]="percentual(c.gasto, c.limite)" max="100" [attr.aria-label]="'Orçamento de ' + c.categoria" [class.excedido]="c.gasto > c.limite"></progress>
+              <div class="linha detalhe"><span>Limite {{ c.limite | currency:codigoMoeda() }}</span><span [class.erro]="c.gasto > c.limite">{{ c.gasto > c.limite ? 'Excedido em ' : 'Disponível ' }}{{ (c.gasto > c.limite ? c.gasto - c.limite : c.limite - c.gasto) | currency:codigoMoeda() }}</span></div>
+            } @else { <p class="nota">Sem limite definido.</p> }
+            <button type="button" class="acao-texto" (click)="abrirOrcamento(c.categoria, c.limite ?? 0)" [disabled]="salvando()">{{ c.limite !== null ? 'Alterar limite' : 'Definir limite' }}</button>
+          </article>
+        } @empty { <p class="vazio">Nenhum gasto ou orçamento nesta moeda e neste mês. Registre uma transação ou defina seu primeiro limite.</p> }
+      </div>
+      @if (orcamentos().length) {
+        <details><summary>Gerenciar limites do mês</summary>
+          @for (o of orcamentos(); track o.id) { <div class="linha limite"><span>{{ o.categoria }}: {{ o.limite | currency:codigoMoeda() }}</span><button type="button" [disabled]="salvando()" (click)="excluirOrcamento(o)" [attr.aria-label]="'Remover orçamento de ' + o.categoria">Remover limite</button></div> }
+        </details>
+      }
+    </section>
+
+    <section class="secao" aria-labelledby="transacoes-titulo">
+      <header><h2 id="transacoes-titulo">Movimentações do mês</h2><a routerLink="/transacoes">Todas as transações</a></header>
+      @if (r.transacoes.length) {
+        <div class="tabela-scroll" tabindex="0" role="region" aria-label="Movimentações do mês, deslize para ver todas as colunas"><table><thead><tr><th scope="col">Descrição</th><th scope="col">Data</th><th scope="col">Categoria</th><th scope="col">Tipo</th><th scope="col" class="valor">Valor</th></tr></thead><tbody>
+          @for (t of r.transacoes; track t.id) { <tr><td><a [routerLink]="['/transacoes', t.id]">{{ t.descricao }}</a></td><td>{{ t.data | date:'dd/MM':'UTC' }}</td><td>{{ t.categoria }}</td><td>{{ t.tipo === 0 ? 'Gasto' : 'Receita' }}</td><td class="valor">{{ t.valor | currency:codigoMoeda() }}</td></tr> }
+        </tbody></table></div>
+      } @else { <p class="vazio">Nenhuma movimentação neste mês e nesta moeda.</p> }
+    </section>
+  }
+
+  <section class="secao recorrencias" aria-labelledby="recorrencias-titulo">
+    <header><div><h2 id="recorrencias-titulo">Despesas recorrentes</h2><p>Contas mensais, como aluguel e assinaturas.</p></div><button type="button" (click)="abrirRecorrencia()" [disabled]="salvando()">Nova despesa recorrente</button></header>
+    <div class="geracao"><div><strong>Lançar recorrências de {{ tituloMes() }}</strong><p>Inclui todas as moedas. Cada despesa é lançada uma vez por mês. Vencimentos 29, 30 e 31 se ajustam ao último dia quando necessário.</p></div><button type="button" class="destaque" (click)="gerar()" [disabled]="salvando() || carregandoRecorrencias() || !!erroRecorrencias()">Gerar lançamentos do mês</button></div>
+    @if (formRecorrenciaAberto()) {
+      <form class="formulario" [formGroup]="formRecorrencia" (ngSubmit)="salvarRecorrencia()">
+        <h3 class="largura-total">{{ edicaoRecorrencia() ? 'Editar despesa recorrente' : 'Nova despesa recorrente' }}</h3>
+        <div class="campo"><label for="recorrencia-descricao">Descrição</label><input id="recorrencia-descricao" formControlName="descricao" maxlength="200" placeholder="Ex.: Aluguel" /></div>
+        <div class="campo"><label for="recorrencia-categoria">Categoria</label><input id="recorrencia-categoria" formControlName="categoria" maxlength="100" list="categorias-financeiras" /></div>
+        <div class="campo"><label for="recorrencia-valor">Valor</label><input id="recorrencia-valor" type="number" formControlName="valor" min="0.01" max="999999999" step="0.01" /></div>
+        <div class="campo"><label>Moeda da despesa</label><app-select formControlName="moeda" [opcoes]="moedas" ariaLabel="Moeda da despesa recorrente" /></div>
+        <div class="campo"><label for="recorrencia-dia">Dia do vencimento</label><input id="recorrencia-dia" type="number" min="1" max="31" step="1" formControlName="diaVencimento" /></div>
+        <div class="campo"><label>Forma de pagamento</label><app-select formControlName="formaPagamento" [opcoes]="pagamentos" ariaLabel="Forma de pagamento da despesa recorrente" /></div>
+        <div class="campo"><label for="recorrencia-inicio">Mês de início</label><input id="recorrencia-inicio" type="month" min="2000-01" max="2100-12" formControlName="inicio" /></div>
+        <div class="campo"><label for="recorrencia-fim">Mês final (opcional)</label><input id="recorrencia-fim" type="month" [min]="formRecorrencia.controls.inicio.value" max="2100-12" formControlName="fim" /></div>
+        <label class="check largura-total"><input type="checkbox" formControlName="ativa" /> Ativa para gerar novos lançamentos</label>
+        <p class="nota largura-total">Alterações valem para novos lançamentos. Os já criados permanecem no histórico.</p>
+        <div class="acoes"><button type="submit" class="destaque" [disabled]="formRecorrencia.invalid || salvando()">Salvar despesa recorrente</button><button type="button" (click)="formRecorrenciaAberto.set(false)" [disabled]="salvando()">Cancelar</button></div>
+      </form>
+    }
+    @if (carregandoRecorrencias()) { <p role="status">Carregando despesas recorrentes…</p> }
+    @else if (erroRecorrencias()) { <p class="erro" role="alert">{{ erroRecorrencias() }}</p><button type="button" (click)="carregarRecorrencias()">Tentar novamente</button> }
+    @else {
+      <p class="nota">Exibindo despesas em {{ codigoMoeda() }}.</p>
+      @for (r of recorrenciasVisiveis(); track r.id) {
+        <article class="recorrencia"><div><h3>{{ r.descricao }}</h3><p>{{ r.categoria }} · Vence no dia {{ r.diaVencimento }} · {{ r.ativa ? 'Ativa' : 'Pausada' }}</p><small>De {{ r.inicio }}{{ r.fim ? ' até ' + r.fim : ', sem término' }}</small></div><strong>{{ r.valor | currency:codigoMoeda() }}</strong><div class="acoes"><button type="button" (click)="abrirRecorrencia(r)" [disabled]="salvando()" [attr.aria-label]="'Editar ' + r.descricao">Editar</button><button type="button" (click)="alternarRecorrencia(r)" [disabled]="salvando()" [attr.aria-label]="(r.ativa ? 'Pausar ' : 'Retomar ') + r.descricao">{{ r.ativa ? 'Pausar' : 'Retomar' }}</button></div></article>
+      } @empty { <p class="vazio">Nenhuma despesa recorrente nesta moeda. Cadastre uma conta mensal para evitar preencher tudo novamente.</p> }
+    }
+  </section>
+</main>

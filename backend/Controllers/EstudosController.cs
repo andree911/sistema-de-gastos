@@ -19,6 +19,17 @@ public class EstudosController : ControllerBase
 
     private int UserId => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
+    [HttpGet("resumo-dia")]
+    public async Task<IActionResult> ResumoDia([FromQuery] DateOnly data)
+    {
+        if (!ControleGastos.Services.AcompanhamentoRegras.DataValida(data)) return BadRequest("Informe uma data válida.");
+        var inicio = ControleGastos.Services.AcompanhamentoRegras.Utc(data);
+        var fim = inicio.AddDays(1);
+        var resumo = await _context.SessoesEstudo.Where(x => x.UserId == UserId && x.Data >= inicio && x.Data < fim)
+            .GroupBy(x => x.UserId).Select(g => new { Minutos = g.Sum(x => x.DuracaoMinutos), Sessoes = g.Count() }).FirstOrDefaultAsync();
+        return Ok(new { Minutos = resumo?.Minutos ?? 0, Sessoes = resumo?.Sessoes ?? 0 });
+    }
+
     [HttpGet("planos")]
     public async Task<IActionResult> ListarPlanos()
     {

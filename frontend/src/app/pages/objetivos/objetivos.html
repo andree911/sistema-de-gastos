@@ -1,0 +1,29 @@
+<main>
+  <header><div><h1>Meus objetivos</h1><p>Defina onde quer chegar e acompanhe o que já registrou.</p></div><button type="button" class="primario" (click)="abrir()" [disabled]="salvando()">+ Objetivo</button></header>
+  @if (erro()) { <p role="alert" class="erro">{{ erro() }}</p><button type="button" (click)="carregar()">Tentar novamente</button> }
+  @if (aberto()) {
+    <form [formGroup]="form" (ngSubmit)="salvar()" aria-label="Configurar objetivo">
+      <div class="campo largo"><label for="objetivo-titulo">Nome do objetivo</label><input id="objetivo-titulo" formControlName="titulo" maxlength="200" placeholder="Ex.: estudar 5 horas nesta semana" /></div>
+      <div class="campo"><label>Como acompanhar</label><app-select ariaLabel="Tipo de objetivo" formControlName="tipo" [opcoes]="tipos" /></div>
+      <div class="campo"><label for="objetivo-meta">Meta {{ tipoSelecionado() === 'estudo' || tipoSelecionado() === 'exercicio' ? '(em minutos)' : tipoSelecionado() === 'habitos' ? '(conclusões)' : '' }}</label><input id="objetivo-meta" type="number" min="0.01" step="0.01" max="999999999999" formControlName="meta" /></div>
+      <div class="campo"><label>Data inicial</label><app-datepicker formControlName="inicio" /></div><div class="campo"><label>Data final</label><app-datepicker formControlName="fim" /></div>
+      @if (tipoSelecionado() === 'manual') { <div class="campo"><label for="objetivo-atual">Progresso atual</label><input id="objetivo-atual" type="number" min="0" step="0.01" max="999999999999" formControlName="valorManual" /></div> }
+      @if (tipoSelecionado() === 'economia') { <div class="campo"><label>Moeda</label><app-select ariaLabel="Moeda do objetivo" formControlName="moeda" [opcoes]="moedas" /></div> }
+      <p class="largo">{{ tipoSelecionado() === 'manual' ? 'Atualize o progresso editando este objetivo.' : tipoSelecionado() === 'economia' ? 'Calculado pelas receitas menos os gastos na moeda escolhida, dentro do período. É um saldo de registros, não o saldo de uma conta bancária.' : 'O progresso é calculado automaticamente pelos registros dentro do período, incluindo as datas inicial e final.' }} As metas semanais dos planos de estudo continuam disponíveis na área de estudos.</p>
+      <div class="acoes largo"><button type="submit" class="primario" [disabled]="form.invalid || salvando()">Salvar objetivo</button><button type="button" (click)="aberto.set(false)" [disabled]="salvando()">Cancelar</button></div>
+    </form>
+  }
+  @if (carregando()) { <p role="status">Carregando objetivos...</p> }
+  @else if (!erro()) {
+    <div class="lista">
+      @for (o of objetivos(); track o.id) {
+        <article class="objetivo"><h2>{{ o.titulo }}</h2><small>{{ nomeTipo(o) }} · {{ o.inicio | date:'dd/MM/yyyy':'UTC' }} a {{ o.fim | date:'dd/MM/yyyy':'UTC' }}</small>
+          <p class="resultado">{{ o.atual | number:'1.0-2' }} / {{ o.meta | number:'1.0-2' }} {{ o.unidade }}</p>
+          <progress max="100" [value]="o.progresso" [attr.aria-label]="'Progresso de ' + o.titulo"></progress><p>{{ o.progresso | number:'1.0-0' }}% · {{ estado(o) }}</p>
+          <div class="acoes"><button type="button" (click)="abrir(o)" [disabled]="salvando()">{{ o.tipo === 'manual' ? 'Atualizar progresso ou meta' : 'Editar meta' }}</button><button type="button" (click)="exclusao.set(o)" [disabled]="salvando()">Excluir</button></div>
+        </article>
+      } @empty { <div class="vazio"><h2>Qual é seu próximo objetivo?</h2><p>Crie uma meta de estudo, saúde, hábitos, finanças ou acompanhe seu próprio progresso manualmente.</p></div> }
+    </div>
+  }
+  @if (exclusao(); as o) { <div class="confirmacao" role="group" aria-label="Confirmar exclusão"><p>Excluir “{{ o.titulo }}”? Seus registros de estudo, saúde e finanças serão preservados.</p><div class="acoes"><button type="button" (click)="excluir()" [disabled]="salvando()">Confirmar exclusão</button><button type="button" (click)="exclusao.set(null)" [disabled]="salvando()">Cancelar</button></div></div> }
+</main>

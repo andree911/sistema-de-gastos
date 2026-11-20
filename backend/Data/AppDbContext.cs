@@ -19,10 +19,36 @@ public class AppDbContext : DbContext
     public DbSet<RegistroSaude> RegistrosSaude { get; set; }
     public DbSet<ItemRefeicao> ItensRefeicao { get; set; }
     public DbSet<TraducaoNutricional> TraducoesNutricionais { get; set; }
+    public DbSet<Habito> Habitos { get; set; }
+    public DbSet<HabitoPausa> HabitosPausas { get; set; }
+    public DbSet<HabitoConclusao> HabitosConclusoes { get; set; }
+    public DbSet<Objetivo> Objetivos { get; set; }
+    public DbSet<Orcamento> Orcamentos { get; set; }
+    public DbSet<DespesaRecorrente> DespesasRecorrentes { get; set; }
+    public DbSet<LancamentoRecorrente> LancamentosRecorrentes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<Habito>().Property(x => x.Titulo).HasMaxLength(200);
+        modelBuilder.Entity<Habito>().HasIndex(x => x.UserId);
+        modelBuilder.Entity<HabitoConclusao>().HasIndex(x => new { x.HabitoId, x.Data }).IsUnique();
+        modelBuilder.Entity<HabitoPausa>().HasIndex(x => x.HabitoId).IsUnique().HasFilter("\"Fim\" IS NULL");
+        modelBuilder.Entity<Objetivo>().Property(x => x.Titulo).HasMaxLength(200);
+        modelBuilder.Entity<Objetivo>().Property(x => x.Tipo).HasMaxLength(20);
+        modelBuilder.Entity<Objetivo>().Property(x => x.Meta).HasPrecision(18, 2);
+        modelBuilder.Entity<Objetivo>().Property(x => x.ValorManual).HasPrecision(18, 2);
+        modelBuilder.Entity<Orcamento>().Property(x => x.Mes).HasMaxLength(7);
+        modelBuilder.Entity<Orcamento>().Property(x => x.Categoria).HasMaxLength(100);
+        modelBuilder.Entity<Orcamento>().Property(x => x.Limite).HasPrecision(18, 2);
+        modelBuilder.Entity<Orcamento>().HasIndex(x => new { x.UserId, x.Mes, x.Moeda, x.Categoria }).IsUnique();
+        modelBuilder.Entity<DespesaRecorrente>().Property(x => x.Descricao).HasMaxLength(200);
+        modelBuilder.Entity<DespesaRecorrente>().Property(x => x.Categoria).HasMaxLength(100);
+        modelBuilder.Entity<DespesaRecorrente>().Property(x => x.Valor).HasPrecision(18, 2);
+        modelBuilder.Entity<DespesaRecorrente>().Property(x => x.Inicio).HasMaxLength(7);
+        modelBuilder.Entity<DespesaRecorrente>().Property(x => x.Fim).HasMaxLength(7);
+        modelBuilder.Entity<LancamentoRecorrente>().Property(x => x.Mes).HasMaxLength(7);
+        modelBuilder.Entity<LancamentoRecorrente>().HasIndex(x => new { x.DespesaRecorrenteId, x.Mes }).IsUnique();
         modelBuilder.Entity<TraducaoNutricional>().HasKey(x => x.Chave);
         modelBuilder.Entity<TraducaoNutricional>().Property(x => x.Chave).HasMaxLength(64);
         modelBuilder.Entity<TraducaoNutricional>().Property(x => x.Original).HasMaxLength(2000);

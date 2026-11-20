@@ -1,0 +1,29 @@
+<section aria-labelledby="habitos-titulo">
+  <header><div><h2 id="habitos-titulo">Hábitos do dia</h2><p>Pequenas ações que se repetem na sua semana.</p></div><button type="button" (click)="abrir()" [disabled]="salvando()">+ Hábito</button></header>
+  @if (erro()) { <p class="erro" role="alert">{{ erro() }}</p><button type="button" (click)="carregar()">Tentar novamente</button> }
+  @if (carregando()) { <p role="status">Carregando hábitos...</p> }
+  @else if (!erro()) {
+    <p>{{ concluidas() }} de {{ dia().length }} hábitos concluídos nesta data.</p>
+    @if (futuro()) { <p>Você poderá marcar as conclusões quando este dia chegar.</p> }
+    @for (item of dia(); track item.habito.id) {
+      <article class="linha"><button type="button" class="check" [attr.aria-pressed]="item.concluida" [attr.aria-label]="(item.concluida ? 'Reabrir ' : 'Concluir ') + item.habito.titulo" [disabled]="salvando() || futuro()" (click)="concluir(item.habito,!item.concluida)">{{ item.concluida ? '✓' : '' }}</button><div><h3>{{ item.habito.titulo }}</h3><small>{{ nomesDias(item.habito) }}</small></div></article>
+    } @empty { <p class="vazio">Nenhum hábito previsto para esta data. Crie um hábito e escolha os dias em que deseja repeti-lo.</p> }
+  }
+  @if (aberto()) {
+    <form [formGroup]="form" (ngSubmit)="salvar()" aria-label="Configurar hábito">
+      <div class="campo largo"><label for="habito-titulo">Nome do hábito</label><input id="habito-titulo" formControlName="titulo" maxlength="200" placeholder="Ex.: estudar inglês" /></div>
+      <div class="campo"><label>Área</label><app-select ariaLabel="Área do hábito" formControlName="categoria" [opcoes]="categorias" /></div>
+      <fieldset class="largo"><legend>Repetir nos dias</legend><div class="dias">@for (dia of dias; track dia.valor) { <button type="button" [disabled]="edicao() !== null" [attr.aria-pressed]="diasSelecionados().includes(dia.valor)" (click)="alternarDia(dia.valor)">{{ dia.nome }}</button> }</div></fieldset>
+      <div class="campo"><label>Data inicial</label><app-datepicker formControlName="inicio" /></div>
+      <div class="campo"><label>Data final (opcional)</label><app-datepicker formControlName="fim" /><button type="button" [disabled]="edicao() !== null" (click)="form.controls.fim.setValue('')">Sem data final</button></div>
+      @if (edicao()) { <p class="largo">Edite o nome e a área. Para mudar os dias ou o período, arquive este hábito e crie outro. Assim o histórico permanece fiel à programação original.</p> }
+      <div class="acoes largo"><button class="primario" type="submit" [disabled]="form.invalid || !diasSelecionados().length || salvando()">Salvar hábito</button><button type="button" (click)="aberto.set(false)" [disabled]="salvando()">Cancelar</button></div>
+    </form>
+  }
+  @if (gerenciaveis().length) {
+    <details><summary>Gerenciar hábitos ({{ gerenciaveis().length }})</summary><p>Pausar interrompe as ocorrências a partir de hoje. O histórico permanece salvo.</p>
+      @for (h of gerenciaveis(); track h.id) { <article><h3>{{ h.titulo }}</h3><p>{{ nomesDias(h) }} · {{ h.pausado ? 'Pausado' : 'Ativo' }}</p><div class="acoes"><button type="button" (click)="abrir(h)" [disabled]="salvando()">Editar</button><button type="button" (click)="pausar(h)" [disabled]="salvando()">{{ h.pausado ? 'Retomar hoje' : 'Pausar hoje' }}</button><button type="button" (click)="exclusao.set(h)" [disabled]="salvando()">Arquivar</button></div></article> }
+    </details>
+  }
+  @if (exclusao(); as h) { <div class="confirmacao" role="group" aria-label="Confirmar arquivamento"><p>Arquivar “{{ h.titulo }}”? As conclusões permanecem no histórico.</p><div class="acoes"><button type="button" (click)="arquivar()" [disabled]="salvando()">Confirmar arquivamento</button><button type="button" (click)="exclusao.set(null)" [disabled]="salvando()">Cancelar</button></div></div> }
+</section>

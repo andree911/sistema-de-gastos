@@ -1,6 +1,6 @@
 <main class="rotina-container">
   <header class="rotina-header">
-    <div><h1>Minha rotina</h1><p class="subtitulo">Um dia de cada vez. Planeje, acompanhe e ajuste.</p></div>
+    <div><h1>Meu dia</h1><p class="subtitulo">Sua rotina, estudos, saúde e finanças no mesmo lugar.</p></div>
     <button type="button" class="botao-adicionar" (click)="abrir()">+ Atividade</button>
   </header>
   <nav class="navegacao" aria-label="Escolher período">
@@ -22,7 +22,7 @@
   @if (carregando()) { <p role="status">Carregando sua rotina...</p> }
   @else if (!falhaCarga()) {
     <section class="progresso-card" aria-label="Progresso do dia">
-      <div><span class="rotulo">Progresso do dia</span><strong>{{ concluidas() }} de {{ atividades().length }} concluídas</strong></div>
+      <div><span class="rotulo">Atividades do dia</span><strong>{{ concluidas() }} de {{ atividades().length }} concluídas</strong></div>
       <div class="progresso-valor">{{ progresso() }}%</div>
       <div class="barra" role="progressbar" [attr.aria-valuenow]="progresso()" aria-valuemin="0" aria-valuemax="100" aria-label="Atividades concluídas"><span [style.width.%]="progresso()"></span></div>
     </section>
@@ -53,6 +53,8 @@
       }
     </section>
   }
+  <app-habitos [data]="dataSelecionada()" (alterado)="revisaoResumo.set(revisaoResumo() + 1)" />
+  <app-panorama-dia [data]="dataSelecionada()" [revisao]="revisaoResumo()" />
   <app-resumo-saude [data]="dataSelecionada()" />
   @if (erroEstudos()) { <p class="erro">{{ erroEstudos() }}</p> }
   @if (estudosPrevistos().length) {

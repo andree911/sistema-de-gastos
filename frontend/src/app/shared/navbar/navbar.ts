@@ -18,9 +18,11 @@ export class Navbar {
   private router = inject(Router);
 
   links: LinkNavegacao[] = [
-    { rota: '/rotina', rotulo: 'Rotina' },
+    { rota: '/rotina', rotulo: 'Meu dia' },
+    { rota: '/objetivos', rotulo: 'Objetivos' },
     { rota: '/estudos', rotulo: 'Estudos' },
     { rota: '/saude', rotulo: 'Saúde' },
+    { rota: '/financas', rotulo: 'Finanças' },
     { rota: '/transacoes', rotulo: 'Transações' },
     { rota: '/minha-conta', rotulo: 'Minha conta' },
   ];

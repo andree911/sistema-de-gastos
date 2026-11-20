@@ -8,6 +8,8 @@ import { Rotina } from './pages/rotina/rotina';
 import { Estudos } from './pages/estudos/estudos';
 import { Saude } from './pages/saude/saude';
 import { authGuard } from './core/auth-guard';
+import { Objetivos } from './pages/objetivos/objetivos';
+import { Financas } from './pages/financas/financas';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -16,6 +18,8 @@ export const routes: Routes = [
   { path: 'transacoes/:id', component: TransacaoDetalhe, canActivate: [authGuard] },
   { path: 'minha-conta', component: MinhaConta, canActivate: [authGuard] },
   { path: 'rotina', component: Rotina, canActivate: [authGuard] },
+  { path: 'objetivos', component: Objetivos, canActivate: [authGuard] },
+  { path: 'financas', component: Financas, canActivate: [authGuard] },
   { path: 'estudos', component: Estudos, canActivate: [authGuard] },
   { path: 'saude', component: Saude, canActivate: [authGuard] },
   { path: '', redirectTo: 'login', pathMatch: 'full' }

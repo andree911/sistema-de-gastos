@@ -7,9 +7,11 @@ import { EstudosService, MateriaEstudo } from '../../core/estudos';
 import { Select } from '../../shared/select/select';
 import { Datepicker } from '../../shared/datepicker/datepicker';
 import { ResumoSaudeCard } from '../saude/resumo-saude';
+import { Habitos } from './habitos';
+import { PanoramaDia } from './panorama-dia';
 
 @Component({
-  imports: [FormsModule, ReactiveFormsModule, RouterLink, Select, Datepicker, ResumoSaudeCard],
+  imports: [FormsModule, ReactiveFormsModule, RouterLink, Select, Datepicker, ResumoSaudeCard, Habitos, PanoramaDia],
   selector: 'app-rotina', styleUrl: './rotina.css', templateUrl: './rotina.html',
 })
 export class Rotina implements OnInit, OnDestroy {
@@ -30,6 +32,7 @@ export class Rotina implements OnInit, OnDestroy {
   excluir = signal<Atividade | null>(null);
   dataSelecionada = signal(this.formatarData(new Date()));
   filtro = signal('todas');
+  revisaoResumo = signal(0);
   categorias = [
     { valor: 0, nome: 'Pessoal' }, { valor: 1, nome: 'Estudos' },
     { valor: 2, nome: 'Saúde' }, { valor: 3, nome: 'Finanças' },

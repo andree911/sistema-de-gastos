@@ -100,13 +100,31 @@ O projeto esta evoluindo de um controle de gastos para um acompanhante de rotina
 
 ### Próximos passos
 
-- Adicionar habitos recorrentes e historico semanal a rotina.
 - Expandir a biblioteca de cursos com curadoria por tema e referencias.
-- Integrar os planos e sessoes de estudo a rotina diaria.
-- Adicionar registros manuais de sono, passos e treinos.
-- Criar um painel unificado de progresso e insights.
 - Criar painel de insights diarios e semanais.
 - Preparar o produto como PWA/app mobile.
+
+### Hábitos, objetivos e painel Meu dia
+
+- `/rotina` agora reúne atividades, hábitos da data, estudos realizados e previstos, saúde, movimentações financeiras do dia e objetivos do período.
+- Hábitos se repetem nos dias da semana escolhidos, com data inicial e término opcional, conclusão por data, pausa/retomada a partir de hoje e arquivamento sem apagar o histórico. Nome e área podem ser editados; para alterar o calendário, arquive e crie outro hábito. Não é possível concluir datas futuras.
+- `/objetivos` acompanha metas manuais ou calcula progresso por minutos estudados, conclusões de hábitos, minutos de exercício e saldo de receitas menos gastos na moeda escolhida. O período inclui as duas datas. As metas semanais dos planos de estudo permanecem disponíveis.
+- Os resumos de estudo e as metas consultam todos os registros do período no servidor, independentemente do limite de 100 itens da listagem de sessões.
+
+### Finanças mensais
+
+- `/financas` permite selecionar mês e moeda, consultar receitas, gastos, resultado, movimentações e gastos por categoria. Valores de moedas diferentes permanecem separados.
+- Orçamentos são definidos por usuário, mês, moeda e categoria. As categorias são comparadas sem diferenciar maiúsculas/minúsculas e espaços nas extremidades.
+- Despesas recorrentes mensais têm valor, categoria, moeda, forma de pagamento, dia do vencimento e período. O botão **Gerar lançamentos do mês** cria os gastos elegíveis de todas as moedas uma única vez por recorrência/mês, inclusive com cliques simultâneos. Em meses curtos, o vencimento se ajusta ao último dia.
+- Editar ou pausar uma recorrência preserva os lançamentos existentes. Excluir uma transação gerada também preserva o controle de geração: ela não será recriada automaticamente.
+- A migração `AddHabitosObjetivosFinancas` deve ser aplicada no banco de desenvolvimento com `dotnet ef database update` antes de executar esta versão. Confirme o ambiente de destino antes de aplicar migrações. Nenhum banco remoto deve ser alterado apenas para testar localmente.
+- Datas dos novos hábitos usam o dia civil de `America/Sao_Paulo`. Os demais registros mantêm a convenção de datas já usada pelo projeto.
+
+### Verificação local
+
+- Frontend: em `frontend`, execute `npm test -- --watch=false` e `npm run build`.
+- Backend: em `backend`, execute `dotnet build` e `dotnet ef migrations has-pending-model-changes`.
+- Com a API local em execução, o roteiro `backend/scripts/smoke-acompanhamento.ps1 -AllowTestWrites` testa os fluxos HTTP com duas contas temporárias e limpa somente essas contas e seus registros. Ele exige banco local, configuração em User Secrets e o `psql` do PostgreSQL 16 instalado. O parâmetro `-AllowTestWrites` é obrigatório; use apenas no ambiente local de desenvolvimento.
 
 ## Deploy
 

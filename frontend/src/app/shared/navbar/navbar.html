@@ -1,10 +1,10 @@
-<nav class="navbar">
+<nav class="navbar" aria-label="Navegação principal">
   <span class="marca">Controle de Gastos</span>
 
   <ul class="links">
     @for (link of links; track link.rota) {
       <li>
-        <a [routerLink]="link.rota" routerLinkActive="ativo">{{ link.rotulo }}</a>
+        <a [routerLink]="link.rota" routerLinkActive="ativo" ariaCurrentWhenActive="page">{{ link.rotulo }}</a>
       </li>
     }
   </ul>
